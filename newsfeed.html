@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>India Markets — Live News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+:root {
+  --accent:  #ffe045;
+  --accent2: #a8ff3e;
+  --coral:   #ff4d6d;
+  --purple:  #7c3aed;
+  --cyan:    #00d4ff;
+  --ink:     #0a0a0f;
+  --ink2:    #14141f;
+  --paper:   #f5f3ee;
+  --paper2:  #eceae3;
+  --muted:   #6b6b7a;
+  --border:  #d8d5cc;
+  --white:   #ffffff;
+  --green:   #22c55e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255,224,69,0.07) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(168,255,62,0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(124,58,237,0.04) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  border-bottom: 3px solid var(--accent);
+}
+
+.header-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.02em; color: var(--white);
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.header-logo-dot {
+  width: 10px; height: 10px;
+  background: var(--accent); border-radius: 50%;
+  animation: logoPulse 2s infinite;
+}
+@keyframes logoPulse {
+  0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(255,224,69,0.5); }
+  50%      { transform:scale(1.2); box-shadow:0 0 0 6px rgba(255,224,69,0); }
+}
+
+.header-nav {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 4px;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 18px; border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none; white-space: nowrap;
+  transition: all .2s;
+}
+.nav-btn i { font-size: 12px; }
+.nav-btn.home { color: rgba(255,255,255,0.45); }
+.nav-btn.home:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+.nav-btn.news { background: var(--accent); color: var(--ink); font-weight: 700; }
+
+.header-right { display:flex; align-items:center; gap:14px; }
+.live-badge {
+  background: rgba(255,224,69,0.12);
+  border: 1px solid rgba(255,224,69,0.3);
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.15em;
+  padding: 4px 12px; border-radius: 20px;
+  display: flex; align-items: center; gap: 6px;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: liveBlink 1.5s infinite;
+}
+@keyframes liveBlink {
+  0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(255,224,69,0.5); }
+  50%      { opacity:0.4; box-shadow:0 0 0 4px rgba(255,224,69,0); }
+}
+.refresh-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  width: 36px; height: 36px; border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.refresh-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,224,69,0.08); }
+.refresh-btn svg { width:14px; height:14px; }
+.refresh-btn.spinning svg { animation: spin .7s linear infinite; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--ink);
+  height: 38px; display: flex; align-items: center; overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.ticker-label {
+  background: var(--accent); color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.18em;
+  padding: 0 14px; height: 100%;
+  display: flex; align-items: center; flex-shrink: 0;
+}
+.ticker-scroll { overflow: hidden; flex: 1; }
+.ticker-track {
+  display: inline-flex;
+  animation: tickerMove 70s linear infinite; white-space: nowrap;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes tickerMove { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.t-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.35);
+  padding: 0 20px; height: 38px;
+  display: inline-flex; align-items: center; gap: 7px;
+  border-right: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
+}
+.t-sym { color: rgba(255,255,255,0.8); font-weight: 500; }
+.t-up   { color: var(--green); }
+.t-down { color: var(--coral); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 64px 40px 48px; overflow: hidden;
+  border-bottom: 2px solid var(--border);
+}
+.hero-deco {
+  position: absolute; right: -10px; top: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 200px; font-weight: 800;
+  color: rgba(255,224,69,0.04); line-height: 1;
+  pointer-events: none; letter-spacing: -0.06em; user-select: none;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before { content:''; width:20px; height:2px; background:var(--accent); display:inline-block; }
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(48px, 6.5vw, 84px);
+  font-weight: 800; line-height: 0.9;
+  letter-spacing: -0.04em; margin-bottom: 18px;
+}
+.hero-title .solid   { color: var(--ink); }
+.hero-title .outline { color: transparent; -webkit-text-stroke: 3px var(--purple); }
+.hero-sub {
+  font-size: 15px; color: var(--muted);
+  max-width: 480px; line-height: 1.6; margin-bottom: 32px;
+}
+.hero-stats { display: flex; gap: 36px; flex-wrap: wrap; }
+.stat { display: flex; flex-direction: column; gap: 3px; }
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.03em; color: var(--ink);
+}
+.stat-val.c { color: var(--accent); }
+.stat-val.r { color: var(--accent2); }
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── FILTER BARS ── */
+.company-bar, .filter-bar {
+  padding: 10px 40px;
+  display: flex; align-items: center; gap: 8px;
+  overflow-x: auto; scrollbar-width: none;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+.company-bar { border-bottom: 1px solid var(--paper2); }
+.company-bar::-webkit-scrollbar, .filter-bar::-webkit-scrollbar { display: none; }
+.bar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); flex-shrink: 0; margin-right: 4px;
+}
+.company-btn {
+  background: none; border: 1.5px solid var(--border); color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+  padding: 5px 14px; border-radius: 20px;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all .15s;
+}
+.company-btn:hover  { border-color: var(--ink); color: var(--ink); }
+.company-btn.active { background: var(--ink); border-color: var(--ink); color: var(--accent); }
+.filter-btn {
+  background: none; border: 1.5px solid transparent; color: var(--muted);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 5px 14px; border-radius: 20px;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all .15s;
+}
+.filter-btn:hover  { color: var(--ink); border-color: var(--border); }
+.filter-btn.active { background: rgba(255,224,69,0.08); border-color: rgba(255,224,69,0.4); color: var(--accent); }
+
+/* ── SECTION HEADING ── */
+.section-head {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 22px;
+}
+.section-head h2 {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  letter-spacing: -0.03em; color: var(--ink); white-space: nowrap;
+}
+.section-line {
+  flex: 1; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+}
+
+/* ── MAIN ── */
+.main {
+  padding: 32px 40px 0;
+  position: relative; z-index: 1;
+  max-width: 1600px; margin: 0 auto;
+}
+
+/* ── LOADING / ERROR ── */
+.loading-state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 80px 0; gap: 16px; grid-column: span 2;
+}
+.loading-ring {
+  width: 36px; height: 36px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.error-state { grid-column: span 2; padding: 60px 0; text-align: center; }
+.error-state p {
+  font-size: 13px; color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  max-width: 420px; margin: 0 auto 12px; line-height: 1.6;
+}
+.err-btn {
+  background: var(--ink); color: var(--white); border: none;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 11px 26px; border-radius: 10px; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--accent);
+  transition: transform .15s, box-shadow .15s; margin-top: 16px;
+}
+.err-btn:hover { transform:translate(-2px,-2px); box-shadow: 6px 6px 0 var(--accent); }
+
+/* ── NEWS GRID ── */
+.news-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  animation: fadeUp .4s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── NEWS CARD ── */
+.n-card {
+  background: var(--white);
+  border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
+  box-shadow: 5px 5px 0 var(--ink);
+  display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.n-card:hover { transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--ink); }
+.n-card .accent-bar { height: 3px; flex-shrink: 0; }
+.n-card.bull .accent-bar { background: var(--green); }
+.n-card.bear .accent-bar { background: var(--coral); }
+.n-card.neut .accent-bar { background: var(--border); }
+.n-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.n-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.n-cat {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: var(--ink); color: var(--accent);
+  padding: 3px 9px; border-radius: 6px;
+}
+.n-sent {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 6px;
+}
+.n-sent.bullish { background: #eafaf1; color: #16a34a; }
+.n-sent.bearish { background: #fff1f3; color: var(--coral); }
+.n-sent.neutral { background: var(--paper2); color: var(--muted); }
+.n-title {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  line-height: 1.38; color: var(--ink);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  transition: color .15s;
+}
+.n-card:hover .n-title { color: var(--purple); }
+.n-summary {
+  font-size: 13px; line-height: 1.55; color: var(--muted);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.n-foot {
+  margin-top: auto; padding-top: 14px;
+  border-top: 1px solid var(--paper2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.n-meta { display: flex; align-items: center; gap: 6px; }
+.n-source { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.n-dot { width: 3px; height: 3px; background: var(--border); border-radius: 50%; }
+.n-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+.n-read { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .15s; }
+.n-read:hover { color: var(--ink); }
+
+/* ── LOAD MORE ── */
+.load-more-wrap {
+  padding: 32px 40px 0;
+  display: flex; justify-content: center;
+  position: relative; z-index: 1;
+}
+.load-more-btn {
+  background: var(--ink); color: var(--white); border: none;
+  padding: 13px 40px; border-radius: 12px;
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  box-shadow: 4px 4px 0 var(--accent);
+  transition: all 0.2s;
+}
+.load-more-btn:hover {
+  background: var(--purple);
+  box-shadow: 4px 4px 0 var(--purple);
+  transform: translate(-2px,-2px);
+}
+.load-more-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── MARKET MOVERS ── */
+.movers-section {
+  padding: 48px 40px 80px;
+  position: relative; z-index: 1;
+  max-width: 1600px; margin: 0 auto;
+}
+
+.movers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.movers-card {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.movers-header {
+  padding: 16px 22px; border-bottom: 2px solid var(--ink);
+  display: flex; align-items: center; gap: 12px;
+}
+.movers-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+.movers-icon.g { background: rgba(34,197,94,0.12); color: var(--green); }
+.movers-icon.l { background: rgba(255,77,109,0.1); color: var(--coral); }
+.movers-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.mover-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 22px; border-bottom: 1px solid var(--paper2);
+  transition: background 0.15s;
+}
+.mover-row:hover { background: var(--paper); }
+.mover-row:last-child { border-bottom: none; }
+.mover-left { display: flex; align-items: center; gap: 10px; }
+.mover-abbr {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--paper2); display: flex; align-items: center;
+  justify-content: center; font-family: 'DM Mono', monospace;
+  font-size: 9px; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.04em; flex-shrink: 0;
+}
+.mover-name  { font-size: 13px; font-weight: 600; color: var(--ink); }
+.mover-sub   { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.04em; }
+.mover-right { display: flex; align-items: center; gap: 10px; }
+.mover-price {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--ink);
+}
+.mover-pct {
+  font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+  padding: 3px 10px; border-radius: 8px; white-space: nowrap;
+}
+.mover-pct.up   { background: rgba(34,197,94,0.1);  color: var(--green); }
+.mover-pct.down { background: rgba(255,77,109,0.1); color: var(--coral); }
+.mover-loading {
+  padding: 20px 22px;
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+}
+
+/* ── FOOTER ── */
+.bottom-bar {
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--purple), var(--accent), var(--accent2));
+  background-size: 300%; animation: barShift 5s linear infinite;
+}
+@keyframes barShift { 0%{background-position:0%} 100%{background-position:300%} }
+.footer {
+  background: var(--ink); padding: 22px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--white); display: flex; align-items: center; gap: 8px; }
+.footer-note { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.28); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 800px) {
+  .header, .footer { padding-left: 20px; padding-right: 20px; }
+  .hero, .main, .load-more-wrap, .movers-section { padding-left: 20px; padding-right: 20px; }
+  .company-bar, .filter-bar { padding-left: 20px; padding-right: 20px; }
+  .hero-deco { display: none; }
+  .news-grid { grid-template-columns: 1fr; }
+  .movers-grid { grid-template-columns: 1fr; }
+  .loading-state, .error-state { grid-column: span 1; }
+}
+
+/* ── HAMBURGER MOBILE MENU ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.16); }
+.hamburger-btn span {
+  display: block; width: 18px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav {
+    display: none !important;
+    position: fixed !important;
+    top: 64px; left: 0; right: 0;
+    background: #0a0a0f !important;
+    border-bottom: 2px solid rgba(255,255,255,0.1) !important;
+    flex-direction: column !important;
+    padding: 10px 16px 14px !important;
+    gap: 4px !important;
+    z-index: 999 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    border-radius: 0 !important;
+  }
+  .header-nav.open { display: flex !important; }
+  .nav-btn {
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+  .header-badge { display: none !important; }
+  .header-logo { font-size: 18px !important; }
+  .header, .site-header { padding: 0 16px !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="header-logo" href="/"><div class="header-logo-dot"></div>FinSafe</a>
+  <nav class="header-nav" id="headerNav">
+    <a class="nav-btn home" href="/"><i class="fas fa-bolt"></i> Analyzer</a>
+    <a class="nav-btn news" href="/newsfeed"><i class="fas fa-chart-line"></i> India Markets</a>
+    <a class="nav-btn home" href="/blindsimulation"><i class="fas fa-eye-slash"></i> Blind Sim</a>
+    <a class="nav-btn" href="/about"><i class="fas fa-info-circle"></i> About</a>
+  </nav>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshAll()" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+      </svg>
+    </button>
+  </div>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" onclick="(function(){ var n=document.getElementById('headerNav'); var b=document.getElementById('hamburgerBtn'); n.classList.toggle('open'); b.classList.toggle('open'); })()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">LIVE</div>
+  <div class="ticker-scroll">
+    <div class="ticker-track" id="tickerTrack">
+      <div class="t-item" style="color:rgba(255,255,255,0.2)">Loading quotes…</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-deco">NSE</div>
+  <div class="hero-eyebrow">NSE · BSE · Nifty · Sensex · RBI · SEBI</div>
+  <h1 class="hero-title">
+    <span class="solid">INDIA</span><br>
+    <span class="outline">MARKETS</span>
+  </h1>
+  <p class="hero-sub">Real-time Indian stock market news via Finnhub — NSE/BSE listed companies, macro news, earnings &amp; more.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-val c" id="articleCount">—</span>
+      <span class="stat-label">Articles</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="lastUpdated" style="font-size:18px;color:var(--muted)">—</span>
+      <span class="stat-label">Updated IST</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val r" id="sourceCount">—</span>
+      <span class="stat-label">Sources</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPANY BAR -->
+<div class="company-bar">
+  <span class="bar-label">Company</span>
+  <button class="company-btn active" data-sym="">All India</button>
+  <button class="company-btn" data-sym="INFY">Infosys</button>
+  <button class="company-btn" data-sym="WIT">Wipro</button>
+  <button class="company-btn" data-sym="HDB">HDFC Bank</button>
+  <button class="company-btn" data-sym="IBN">ICICI Bank</button>
+  <button class="company-btn" data-sym="TTM">Tata Motors</button>
+  <button class="company-btn" data-sym="RDY">Dr. Reddy's</button>
+  <button class="company-btn" data-sym="VEDL">Vedanta</button>
+  <button class="company-btn" data-sym="AZRE">Azure Power</button>
+  <button class="company-btn" data-sym="SIFY">Sify Tech</button>
+</div>
+
+<!-- TOPIC FILTER -->
+<div class="filter-bar">
+  <span class="bar-label">Topic</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="nifty">Nifty / Sensex</button>
+  <button class="filter-btn" data-filter="earnings">Earnings</button>
+  <button class="filter-btn" data-filter="ipo">IPO</button>
+  <button class="filter-btn" data-filter="mergers">M&amp;A</button>
+  <button class="filter-btn" data-filter="banking">Banking / RBI</button>
+  <button class="filter-btn" data-filter="technology">IT / Tech</button>
+  <button class="filter-btn" data-filter="energy">Energy</button>
+  <button class="filter-btn" data-filter="crypto">Crypto</button>
+</div>
+
+<!-- NEWS -->
+<main class="main">
+  <div class="section-head">
+    <h2>Market News</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="news-grid" id="newsGrid">
+    <div class="loading-state">
+      <div class="loading-ring"></div>
+      <div class="loading-text">Loading Indian market news…</div>
+    </div>
+  </div>
+</main>
+
+<!-- LOAD MORE -->
+<div class="load-more-wrap">
+  <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()" style="display:none">
+    <i class="fas fa-plus"></i> Load More News
+  </button>
+</div>
+
+<!-- MARKET MOVERS -->
+<section class="movers-section">
+  <div class="section-head">
+    <h2>Market Movers</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="movers-grid">
+    <div class="movers-card">
+      <div class="movers-header">
+        <div class="movers-icon g"><i class="fas fa-arrow-trend-up"></i></div>
+        <div class="movers-title">Top Gainers — NSE</div>
+      </div>
+      <div id="gainersContainer">
+        <div class="mover-loading"><div class="loading-ring" style="width:18px;height:18px;border-width:2px"></div> Loading…</div>
+      </div>
+    </div>
+    <div class="movers-card">
+      <div class="movers-header">
+        <div class="movers-icon l"><i class="fas fa-arrow-trend-down"></i></div>
+        <div class="movers-title">Top Losers — NSE</div>
+      </div>
+      <div id="losersContainer">
+        <div class="mover-loading"><div class="loading-ring" style="width:18px;height:18px;border-width:2px"></div> Loading…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bottom-bar"></div>
+<footer class="footer">
+  <div class="footer-logo"><div class="header-logo-dot"></div> FinSafe</div>
+  <div class="footer-note">Powered by Finnhub · Yahoo Finance · All times IST · <a href="/" style="color:rgba(255,255,255,0.4);text-decoration:none;">← Analyzer</a></div>
+</footer>
+
+<script>
+window._news = { all:[], filtered:[], shown:0, page:12 };
+
+function _showBtn() {
+  const btn = document.getElementById('loadMoreBtn');
+  const remaining = window._news.filtered.length - window._news.shown;
+  if (remaining > 0) {
+    btn.style.display = 'flex';
+    btn.innerHTML = `<i class="fas fa-plus"></i> Load More News <span style="background:rgba(255,255,255,0.15);padding:2px 8px;border-radius:6px;font-size:11px">${remaining} left</span>`;
+  } else { btn.style.display = 'none'; }
+}
+
+function _appendCards(articles) {
+  const grid = document.getElementById('newsGrid');
+  grid.insertAdjacentHTML('beforeend', articles.map(buildCard).join(''));
+  window._news.shown += articles.length;
+  _showBtn();
+}
+
+function renderNews(articles) {
+  window._news.filtered = articles; window._news.shown = 0;
+  const grid = document.getElementById('newsGrid');
+  const btn  = document.getElementById('loadMoreBtn');
+  if (!articles.length) {
+    grid.innerHTML = `<div class="error-state"><p>No news matched this filter.</p><button class="err-btn" onclick="refreshAll()">Refresh</button></div>`;
+    btn.style.display = 'none'; return;
+  }
+  grid.innerHTML = '';
+  _appendCards(articles.slice(0, window._news.page));
+  const sources = [...new Set(articles.map(a=>a._src||a.source).filter(Boolean))];
+  document.getElementById('articleCount').textContent = articles.length;
+  document.getElementById('sourceCount').textContent  = sources.length;
+  document.getElementById('lastUpdated').textContent  = formatIST();
+}
+
+function loadMore() {
+  const next = window._news.filtered.slice(window._news.shown, window._news.shown + window._news.page);
+  if (!next.length) { document.getElementById('loadMoreBtn').style.display = 'none'; return; }
+  _appendCards(next);
+}
+
+const INDIAN_COMPANIES = [
+  {sym:'INFY',name:'Infosys'},{sym:'WIT',name:'Wipro'},{sym:'HDB',name:'HDFC Bank'},
+  {sym:'IBN',name:'ICICI Bank'},{sym:'TTM',name:'Tata Motors'},{sym:'RDY',name:"Dr. Reddy's"},
+  {sym:'VEDL',name:'Vedanta'},{sym:'AZRE',name:'Azure Power'},{sym:'SIFY',name:'Sify Tech'},
+  {sym:'RELIANCE.NS',name:'Reliance'},{sym:'TCS.NS',name:'TCS'},{sym:'HDFCBANK.NS',name:'HDFC Bank'},
+  {sym:'ICICIBANK.NS',name:'ICICI Bank'},{sym:'WIPRO.NS',name:'Wipro'},{sym:'INFY.NS',name:'Infosys'},
+  {sym:'SBIN.NS',name:'SBI'},{sym:'BAJFINANCE.NS',name:'Bajaj Finance'},{sym:'MARUTI.NS',name:'Maruti'},
+  {sym:'SUNPHARMA.NS',name:'Sun Pharma'},{sym:'BHARTIARTL.NS',name:'Airtel'},
+  {sym:'AXISBANK.NS',name:'Axis Bank'},{sym:'KOTAKBANK.NS',name:'Kotak Bank'},
+  {sym:'ADANIENT.NS',name:'Adani Ent'},{sym:'ADANIPORTS.NS',name:'Adani Ports'},
+  {sym:'ONGC.NS',name:'ONGC'},{sym:'NTPC.NS',name:'NTPC'},{sym:'LT.NS',name:'L&T'},
+  {sym:'ITC.NS',name:'ITC'},{sym:'POWERGRID.NS',name:'Power Grid'},
+];
+
+const NSE_STOCKS = [
+  {sym:'RELIANCE.NS',name:'Reliance'},{sym:'TCS.NS',name:'TCS'},
+  {sym:'HDFCBANK.NS',name:'HDFC Bank'},{sym:'INFY.NS',name:'Infosys'},
+  {sym:'ICICIBANK.NS',name:'ICICI Bank'},{sym:'HINDUNILVR.NS',name:'HUL'},
+  {sym:'KOTAKBANK.NS',name:'Kotak Bank'},{sym:'WIPRO.NS',name:'Wipro'},
+  {sym:'AXISBANK.NS',name:'Axis Bank'},{sym:'BHARTIARTL.NS',name:'Airtel'},
+  {sym:'SBIN.NS',name:'SBI'},{sym:'BAJFINANCE.NS',name:'Bajaj Fin'},
+  {sym:'ASIANPAINT.NS',name:'Asian Paints'},{sym:'MARUTI.NS',name:'Maruti'},
+  {sym:'TATAMOTORS.BO',name:'Tata Motors'},{sym:'SUNPHARMA.NS',name:'Sun Pharma'},
+  {sym:'ULTRACEMCO.NS',name:'UltraCemco'},{sym:'TITAN.NS',name:'Titan'},
+  {sym:'NESTLEIND.NS',name:'Nestlé India'},{sym:'POWERGRID.NS',name:'Power Grid'},
+];
+
+const INDIA_KW = [
+  'india','indian','nifty','sensex','bse','nse','sebi','rbi','rupee','dalal street',
+  'tata','adani','reliance','infosys','wipro','hdfc','icici','bajaj','maruti',
+  'ola','zomato','paytm','jio','airtel','mahindra','ongc','ntpc','sbi','axis bank',
+  'kotak','sun pharma','itc','l&t','larsen','vedanta','dr reddy','cipla','hul',
+  'hindustan unilever','titan','nestle','asian paints','ultra tech','power grid',
+  'tech mahindra','hcl tech','mphasis','persistent','coforge','ltimindtree',
+  'mumbai','delhi','bengaluru','pune','hyderabad','chennai','ahmedabad','kolkata',
+  'nifty50','sensex30','smallcap','midcap','largecap','fii','dii','f&o','ipo listing',
+];
+
+let activeFilter = 'all', activeCompany = '';
+
+function dateRange() {
+  const to = new Date(), from = new Date();
+  from.setDate(from.getDate() - 14);
+  const f = d => d.toISOString().split('T')[0];
+  return { from: f(from), to: f(to) };
+}
+
+function stockDateRange() {
+  const to = new Date(), from = new Date();
+  from.setDate(from.getDate() - 14);
+  return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
+}
+
+function formatIST() {
+  return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'}).toUpperCase()+' IST';
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'Just now';
+  const d = (Date.now()/1000) - ts;
+  if (d < 60) return 'Just now';
+  if (d < 3600) return Math.floor(d/60)+'m ago';
+  if (d < 86400) return Math.floor(d/3600)+'h ago';
+  return Math.floor(d/86400)+'d ago';
+}
+
+function fmtPrice(n) {
+  if (!n && n!==0) return '—';
+  return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+const BULL = ['surge','soar','jump','rise','gain','rally','record','profit','growth','beat','upgrade','positive','boost','strong','buy','bullish'];
+const BEAR = ['fall','drop','crash','decline','loss','low','weak','plunge','slump','miss','downgrade','risk','concern','sell','bearish','warning'];
+
+function getSentiment(a) {
+  const t = (a.headline+' '+(a.summary||'')).toLowerCase();
+  const b = BULL.filter(w=>t.includes(w)).length;
+  const r = BEAR.filter(w=>t.includes(w)).length;
+  if (b>r+1) return {label:'Bullish',cls:'bullish',card:'bull'};
+  if (r>b+1) return {label:'Bearish',cls:'bearish',card:'bear'};
+  return {label:'Neutral',cls:'neutral',card:'neut'};
+}
+
+function getCategory(a) {
+  const t = (a.headline+' '+(a.summary||'')).toLowerCase();
+  if (t.match(/nifty|sensex|bse|nse|index/)) return 'Index';
+  if (t.match(/ipo|initial public|listing/)) return 'IPO';
+  if (t.match(/result|earnings|profit|revenue|quarterly/)) return 'Earnings';
+  if (t.match(/rbi|repo rate|monetary policy/)) return 'RBI';
+  if (t.match(/merger|acqui|takeover/)) return 'M&A';
+  if (t.match(/bank|nbfc|lending|credit/)) return 'Banking';
+  if (t.match(/infosys|wipro|tcs|hcl|tech mahindra/)) return 'IT';
+  if (t.match(/oil|gas|energy|power|solar/)) return 'Energy';
+  if (t.match(/crypto|bitcoin|blockchain/)) return 'Crypto';
+  return 'Markets';
+}
+
+function topicMatch(a, f) {
+  if (f==='all') return true;
+  const t = (a.headline+' '+(a.summary||'')).toLowerCase();
+  const map = {
+    nifty:['nifty','sensex','bse','nse','index','dalal'],
+    earnings:['result','earnings','profit','revenue','quarterly','q1','q2','q3','q4'],
+    ipo:['ipo','listing','initial public'],
+    mergers:['merger','acqui','takeover'],
+    banking:['bank','rbi','repo','nbfc','hdfc','icici','sbi','axis','kotak'],
+    technology:['infosys','wipro','tcs','hcl','tech mahindra','it sector','software'],
+    energy:['oil','gas','energy','power','solar','reliance','ongc','adani'],
+    crypto:['crypto','bitcoin','ethereum','blockchain'],
+  };
+  return (map[f]||[]).some(k=>t.includes(k));
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escU(s) { return String(s||'#').replace(/"/g,'%22'); }
+
+function buildCard(a) {
+  const s = getSentiment(a), cat = getCategory(a);
+  return `<a class="n-card ${s.card}" href="${escU(a.url)}" target="_blank" rel="noopener">
+    <div class="accent-bar"></div>
+    <div class="n-body">
+      <div class="n-top"><span class="n-cat">${cat}</span><span class="n-sent ${s.cls}">${s.label}</span></div>
+      <div class="n-title">${esc(a.headline)}</div>
+      ${a.summary ? `<div class="n-summary">${esc(a.summary)}</div>` : ''}
+      <div class="n-foot">
+        <div class="n-meta">
+          <span class="n-source">${esc(a._src||a.source||'Finnhub')}</span>
+          <div class="n-dot"></div>
+          <span class="n-time">${timeAgo(a.datetime)}</span>
+        </div>
+        <span class="n-read">Read →</span>
+      </div>
+    </div>
+  </a>`;
+}
+
+const CACHE_KEY = 'finsafe_news', CACHE_KEY_SYM = 'finsafe_news_sym';
+
+function saveCache(articles, sym) {
+  try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(articles)); sessionStorage.setItem(CACHE_KEY_SYM, sym||''); } catch(e) {}
+}
+
+function loadCache(sym) {
+  try {
+    const cached = sessionStorage.getItem(CACHE_KEY), cachedSym = sessionStorage.getItem(CACHE_KEY_SYM);
+    if (cached && cachedSym === (sym||'')) return JSON.parse(cached);
+  } catch(e) {}
+  return null;
+}
+
+function clearCache() { sessionStorage.removeItem(CACHE_KEY); sessionStorage.removeItem(CACHE_KEY_SYM); }
+
+async function fetchNews(sym='', forceRefresh=false) {
+  const grid = document.getElementById('newsGrid');
+  document.getElementById('loadMoreBtn').style.display = 'none';
+  if (!forceRefresh) {
+    const cached = loadCache(sym);
+    if (cached && cached.length) {
+      window._news.all = cached; window._news.filtered = []; window._news.shown = 0;
+      renderNews(cached.filter(a=>topicMatch(a, activeFilter))); return;
+    }
+  }
+  window._news.all = []; window._news.filtered = []; window._news.shown = 0;
+  grid.innerHTML = `<div class="loading-state"><div class="loading-ring"></div><div class="loading-text">${sym?'Loading '+sym+' news…':'Loading Indian market news…'}</div></div>`;
+  try {
+    let articles = [];
+    const {from, to} = dateRange();
+    const noCache = { cache: 'no-store' };
+    const bust = `&_t=${Date.now()}`;
+    if (sym) {
+      const r = await fetch(`/finnhub-news?category=company&symbol=${sym}&from=${from}&to=${to}${bust}`, noCache);
+      if (!r.ok) throw new Error(`Finnhub returned ${r.status}`);
+      const data = await r.json();
+      if (data && data.error) throw new Error(`Finnhub: ${data.error}`);
+      articles = (Array.isArray(data)?data:[]).map(a=>({...a, _src:sym}));
+    } else {
+      const categoryJobs = ['general','forex','merger','crypto'].map(cat =>
+        fetch(`/finnhub-news?category=${cat}${bust}`, noCache).then(r=>r.ok?r.json():[]).then(d=>Array.isArray(d)?d:[]).catch(()=>[])
+      );
+      const companyJobs = INDIAN_COMPANIES.map(c =>
+        fetch(`/finnhub-news?category=company&symbol=${c.sym}&from=${from}&to=${to}${bust}`, noCache)
+          .then(r=>r.ok?r.json():[]).then(d=>{ if (!Array.isArray(d)) return []; return d.map(a=>({...a, _src:c.name})); }).catch(()=>[])
+      );
+      const raw = (await Promise.all([...categoryJobs, ...companyJobs])).flat();
+      const india = raw.filter(a => {
+        if (a._src) return true;
+        const txt = (a.headline+' '+(a.summary||'')+(a.source||'')).toLowerCase();
+        return INDIA_KW.some(k=>txt.includes(k));
+      });
+      const seen = new Set();
+      articles = india.filter(a => {
+        const key = a.id || a.headline?.slice(0,60);
+        if (seen.has(key)) return false; seen.add(key); return true;
+      });
+    }
+    articles.sort((a,b)=>(b.datetime||0)-(a.datetime||0));
+    window._news.all = articles;
+    saveCache(articles, sym);
+    if (!articles.length) {
+      grid.innerHTML = `<div class="error-state"><p>No Indian market news found. This may be a Finnhub API rate limit — wait a minute and retry.</p><button class="err-btn" onclick="refreshAll()">Retry</button></div>`;
+      document.getElementById('articleCount').textContent = '0';
+      document.getElementById('lastUpdated').textContent = formatIST();
+      document.getElementById('sourceCount').textContent = '0';
+      return;
+    }
+    renderNews(articles.filter(a=>topicMatch(a, activeFilter)));
+  } catch(err) {
+    grid.innerHTML = `<div class="error-state"><p>${esc(err.message)}</p><button class="err-btn" onclick="refreshAll()">Retry</button></div>`;
+  }
+}
+
+async function loadTicker() {
+  const { from, to } = stockDateRange();
+  const results = await Promise.allSettled(
+    NSE_STOCKS.slice(0, 10).map(s =>
+      fetch('/get-stock-data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:s.sym,from,to})})
+      .then(r=>r.json()).then(d=>({...s,data:d}))
+    )
+  );
+  const items = results.filter(r => r.status==='fulfilled' && r.value?.data?.c?.length >= 2).map(r => {
+    const {name,data} = r.value; const c = data.c;
+    const last = c[c.length-1], prev = c[0];
+    if (!last || !prev || prev === 0) return null;
+    const pct = (((last-prev)/prev)*100).toFixed(2); const up = last >= prev;
+    return `<div class="t-item"><span class="t-sym">${name}</span><span style="color:rgba(255,255,255,0.75)">₹${Number(last).toLocaleString('en-IN',{maximumFractionDigits:0})}</span><span class="${up?'t-up':'t-down'}">${up?'▲':'▼'}${Math.abs(pct)}%</span></div>`;
+  }).filter(Boolean);
+  const track = document.getElementById('tickerTrack');
+  if (items.length) { track.innerHTML = items.join('')+items.join(''); }
+  else track.innerHTML = '<div class="t-item" style="color:rgba(255,255,255,0.18)">Quotes unavailable</div>';
+}
+
+async function loadMovers() {
+  const { from, to } = stockDateRange();
+  const results = await Promise.allSettled(
+    NSE_STOCKS.map(s =>
+      fetch('/get-stock-data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:s.sym,from,to})})
+      .then(r=>r.json()).then(d=>({...s,data:d}))
+    )
+  );
+  const movers = results.filter(r => r.status==='fulfilled' && r.value?.data?.c?.length >= 2).map(r => {
+    const {name,sym,data} = r.value; const c = data.c;
+    const last = c[c.length-1], prev = c[0];
+    if (!last || !prev || prev === 0) return null;
+    const pct = ((last-prev)/prev)*100;
+    return {name,sym,last,pct};
+  }).filter(Boolean).sort((a,b) => Math.abs(b.pct)-Math.abs(a.pct));
+  const gainers = movers.filter(m=>m.pct>0).slice(0,7);
+  const losers  = movers.filter(m=>m.pct<0).slice(0,7);
+  function moverRow(m) {
+    const up = m.pct >= 0, sign = up?'+':'';
+    return `<div class="mover-row"><div class="mover-left"><div class="mover-abbr">${m.name.substring(0,4).toUpperCase()}</div><div><div class="mover-name">${m.name}</div><div class="mover-sub">NSE · EQUITY</div></div></div><div class="mover-right"><div class="mover-price">${fmtPrice(m.last)}</div><div class="mover-pct ${up?'up':'down'}">${sign}${m.pct.toFixed(2)}%</div></div></div>`;
+  }
+  const noData = `<div class="mover-loading" style="color:var(--muted);font-size:12px">No data available</div>`;
+  document.getElementById('gainersContainer').innerHTML = gainers.length ? gainers.map(moverRow).join('') : noData;
+  document.getElementById('losersContainer').innerHTML  = losers.length  ? losers.map(moverRow).join('')  : noData;
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); activeFilter = btn.dataset.filter;
+    renderNews(window._news.all.filter(a=>topicMatch(a, activeFilter)));
+  });
+});
+
+document.querySelectorAll('.company-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.company-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); activeCompany = btn.dataset.sym;
+    clearCache();
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+    activeFilter = 'all'; fetchNews(activeCompany);
+  });
+});
+
+function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true; btn.classList.add('spinning');
+  clearCache();
+  Promise.all([fetchNews(activeCompany, true), loadMovers(), loadTicker()])
+    .finally(() => { btn.disabled=false; btn.classList.remove('spinning'); });
+}
+
+fetchNews(); loadTicker(); loadMovers();
+</script>
+<script>
+/* Close hamburger on nav-link click or outside-click */
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('headerNav');
+  var btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    }
+  });
+});
+</script>
+</body>
+</html>

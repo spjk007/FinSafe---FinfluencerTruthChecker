@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinSafe — Finfluencer Analyzer</title>
+
+<script src="https://js.puter.com/v2/"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cyan:    #00aaff;
+  --coral:   #c0152a;
+  --yellow:  #ffe045;
+  --lime:    #a8ff3e;
+  --purple:  #c0152a;
+  --ink:     #0a0a0f;
+  --ink2:    #14141f;
+  --paper:   #f5f3ee;
+  --paper2:  #eceae3;
+  --muted:   #6b6b7a;
+  --border:  #d8d5cc;
+  --white:   #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(0,170,255,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(192,21,42,0.07) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,224,69,0.04) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  border-bottom: 3px solid var(--cyan);
+}
+
+.header-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.02em; color: var(--white);
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.header-logo-dot {
+  width: 10px; height: 10px;
+  background: var(--cyan); border-radius: 50%;
+  animation: logoPulse 2s infinite;
+}
+
+@keyframes logoPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,170,255,0.5); }
+  50%      { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(0,170,255,0); }
+}
+
+.header-nav {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 4px;
+}
+
+.nav-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 18px; border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none; white-space: nowrap;
+  transition: all .2s;
+}
+.nav-btn i { font-size: 12px; }
+
+.nav-btn.home {
+  background: var(--cyan);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.nav-btn.news {
+  color: rgba(255,255,255,0.45);
+}
+.nav-btn.news:hover {
+  color: var(--white);
+  background: rgba(255,255,255,0.06);
+}
+
+.header-badge {
+  background: rgba(0,170,255,0.12);
+  border: 1px solid rgba(0,170,255,0.25);
+  color: var(--cyan);
+  font-family: 'DM Sans', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+}
+
+/* ── STATUS BAR ── */
+#status {
+  background: var(--ink2);
+  color: var(--cyan);
+  font-family: 'DM Sans', monospace;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 10px 40px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,170,255,0.2);
+  min-height: 38px;
+  transition: all 0.3s;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative; padding: 80px 40px 60px;
+  overflow: hidden; z-index: 1;
+}
+
+.hero-eyebrow {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--coral); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--coral); }
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(48px, 7vw, 92px);
+  font-weight: 800; line-height: 0.9;
+  letter-spacing: -0.04em; color: var(--ink); margin-bottom: 8px;
+}
+.hero-title .accent-coral {
+  color: transparent;
+  -webkit-text-stroke: 3px var(--coral);
+}
+
+.hero-sub {
+  font-size: 16px; color: var(--muted);
+  max-width: 480px; line-height: 1.6; margin: 20px 0 40px;
+}
+
+.hero-deco {
+  position: absolute; right: -20px; top: 40px;
+  font-family: 'Syne', sans-serif;
+  font-size: 240px; font-weight: 800;
+  color: rgba(0,170,255,0.05); line-height: 1;
+  pointer-events: none; letter-spacing: -0.06em; user-select: none;
+}
+
+/* ── INPUT ── */
+.input-section {
+  position: relative; z-index: 1;
+  max-width: 780px; padding: 0 40px 60px;
+}
+
+.input-wrapper {
+  position: relative; display: flex; gap: 0;
+  background: var(--white);
+  border: 2px solid var(--ink); border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0px var(--ink);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.input-wrapper:focus-within {
+  box-shadow: 8px 8px 0px var(--cyan);
+  transform: translate(-2px, -2px);
+}
+
+.input-icon {
+  display: flex; align-items: center;
+  padding: 0 18px; color: var(--muted); font-size: 18px; flex-shrink: 0;
+}
+
+#youtubeUrl {
+  flex: 1; padding: 18px 12px;
+  border: none; outline: none;
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  color: var(--ink); background: transparent;
+}
+#youtubeUrl::placeholder { color: #aaa; }
+
+#analyzeBtn {
+  background: var(--ink); color: var(--white); border: none;
+  padding: 0 32px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  transition: background 0.2s; flex-shrink: 0; white-space: nowrap;
+}
+#analyzeBtn:hover:not(:disabled) { background: var(--coral); }
+#analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.analyze-hint {
+  margin-top: 12px; font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── PHASE PANELS ── */
+.phases-section {
+  padding: 0 40px 40px;
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  max-width: 1200px;
+}
+
+.phase-panel {
+  background: var(--white);
+  border: 2px solid var(--ink); border-radius: 16px;
+  overflow: hidden; box-shadow: 4px 4px 0 var(--ink);
+}
+.phase-header {
+  padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+.phase-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.phase-num.p1 { background: var(--cyan);   color: var(--ink); }
+.phase-num.p2 { background: var(--yellow); color: var(--ink); }
+
+.phase-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink);
+}
+.phase-body { padding: 16px 20px; background: var(--ink); }
+.phase-body pre {
+  font-family: 'DM Mono', 'Fira Code', monospace;
+  font-size: 12px; color: #a0ffa0;
+  white-space: pre-wrap; max-height: 200px; overflow-y: auto; line-height: 1.6;
+}
+.phase-body pre::-webkit-scrollbar { width: 4px; }
+.phase-body pre::-webkit-scrollbar-track { background: transparent; }
+.phase-body pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+/* ── RESULTS ── */
+#finalOutputSection { padding: 0 40px 80px; position: relative; z-index: 1; }
+
+.results-heading {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 32px;
+}
+.results-heading h2 {
+  font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800;
+  letter-spacing: -0.03em; color: var(--ink);
+}
+.results-heading-line {
+  flex: 1; height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--coral), transparent);
+}
+
+.results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+/* ── SCORE CARDS ── */
+.score-card {
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: 20px; padding: 28px;
+  box-shadow: 5px 5px 0 var(--ink);
+  position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.score-card:hover { transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--ink); }
+.score-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
+.score-card.trust::before    { background: var(--cyan); }
+.score-card.accuracy::before { background: var(--coral); }
+
+.score-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.score-label i { font-size: 14px; }
+.trust .score-label i    { color: var(--cyan); }
+.accuracy .score-label i { color: var(--coral); }
+
+.score-number {
+  font-family: 'Syne', sans-serif; font-size: 72px; font-weight: 800;
+  line-height: 1; letter-spacing: -0.04em; margin-bottom: 4px;
+}
+.trust .score-number    { color: var(--cyan); }
+.accuracy .score-number { color: var(--coral); }
+.score-denom { font-family: 'DM Sans', sans-serif; font-size: 20px; color: var(--border); }
+
+.score-bar-wrap {
+  margin-top: 16px; height: 6px;
+  background: var(--paper2); border-radius: 3px; overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trust .score-bar-fill    { background: linear-gradient(90deg, #006699, var(--cyan)); }
+.accuracy .score-bar-fill { background: linear-gradient(90deg, #7a0011, var(--coral)); }
+.score-verdict { margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--muted); }
+
+/* ── FULL CARDS ── */
+.full-card {
+  grid-column: span 2;
+  background: var(--white); border: 2px solid var(--ink);
+  border-radius: 20px; padding: 28px 32px;
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.full-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+
+.card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 2px solid var(--paper2);
+}
+.card-header-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.icon-summary  { background: rgba(0,170,255,0.15);  color: var(--cyan); }
+.icon-overview { background: rgba(192,21,42,0.12); color: var(--purple); }
+.icon-risk     { background: rgba(192,21,42,0.12); color: var(--coral); }
+.icon-web      { background: rgba(168,255,62,0.15); color: #4a8f00; }
+.icon-news     { background: rgba(255,224,69,0.2);  color: #8a6a00; }
+
+.card-header-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+}
+.card-text { font-size: 15px; color: var(--ink); line-height: 1.7; }
+
+/* ── RISK TAGS ── */
+.risk-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.risk-tag {
+  background: #fff0f3; color: var(--coral);
+  border: 1.5px solid rgba(192,21,42,0.3);
+  padding: 6px 14px; border-radius: 40px;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 6px; transition: all 0.15s;
+}
+.risk-tag:hover { background: var(--coral); color: var(--white); border-color: var(--coral); }
+
+/* ── WEBSITE ── */
+.website-link {
+  color: var(--purple); font-size: 15px; font-weight: 500;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  word-break: break-all;
+}
+.website-link:hover { color: var(--coral); text-decoration: underline; }
+
+.safety-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.safety-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+}
+.safety-badge.safe     { background: #e8faf0; color: #16a34a; border: 1.5px solid #86efac; }
+.safety-badge.unsafe   { background: #fff0f0; color: #dc2626; border: 1.5px solid #fca5a5; }
+.safety-badge.unknown  { background: #f5f5f4; color: #78716c; border: 1.5px solid #d6d3d1; }
+.safety-badge.checking { background: #eff6ff; color: #3b82f6; border: 1.5px solid #93c5fd; }
+.safety-stats { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ── NEWS GRID ── */
+.news-items-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px; margin-top: 4px;
+}
+.news-item {
+  background: var(--paper); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 16px; transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.news-item::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--yellow), var(--lime));
+  opacity: 0; transition: opacity 0.2s;
+}
+.news-item:hover { border-color: var(--ink); transform: translateY(-3px); box-shadow: 3px 3px 0 var(--ink); }
+.news-item:hover::before { opacity: 1; }
+.news-title a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; line-height: 1.4; display: block; margin-bottom: 8px; }
+.news-title a:hover { color: var(--purple); }
+.news-snippet { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+.news-meta { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; }
+.news-meta span { display: flex; align-items: center; gap: 4px; }
+.no-news { color: var(--muted); text-align: center; padding: 30px; font-style: italic; }
+
+/* ── SPINNER ── */
+.spin-wrap { display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; }
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(0,170,255,0.3); border-top-color: var(--cyan);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ERROR ── */
+.error-message {
+  background: #fff0f3; color: var(--coral);
+  border: 2px solid rgba(192,21,42,0.3);
+  padding: 14px 20px; border-radius: 12px;
+  margin: 10px 40px; font-size: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* ── FOOTER ── */
+.bottom-bar {
+  height: 6px;
+  background: linear-gradient(90deg, var(--cyan), var(--coral), var(--yellow), var(--lime), var(--purple), var(--cyan));
+  background-size: 200%; animation: gradientShift 4s linear infinite;
+}
+@keyframes gradientShift { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+
+.footer { background: var(--ink); padding: 22px 40px; display: flex; align-items: center; justify-content: space-between; }
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--white); display: flex; align-items: center; gap: 8px; }
+.footer-note { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.28); }
+
+/* ── ANIMATE IN ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.results-grid > * { animation: fadeUp 0.4s ease both; }
+.results-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.results-grid > *:nth-child(2) { animation-delay: 0.10s; }
+.results-grid > *:nth-child(3) { animation-delay: 0.15s; }
+.results-grid > *:nth-child(4) { animation-delay: 0.20s; }
+.results-grid > *:nth-child(5) { animation-delay: 0.25s; }
+.results-grid > *:nth-child(6) { animation-delay: 0.30s; }
+.results-grid > *:nth-child(7) { animation-delay: 0.35s; }
+
+/* ── VIDEO HERO ── */
+.video-hero-section { padding: 0 40px 48px; position: relative; z-index: 1; }
+.video-hero-card {
+  background: var(--ink); border: 2px solid var(--ink); border-radius: 24px;
+  overflow: hidden; box-shadow: 6px 6px 0 var(--cyan);
+  display: grid; grid-template-columns: 420px 1fr;
+}
+.video-thumb-wrap { position: relative; overflow: hidden; }
+.video-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+.video-hero-card:hover .video-thumb-wrap img { transform: scale(1.04); }
+.video-thumb-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, transparent 60%, var(--ink) 100%); pointer-events: none; }
+.video-play-badge { position: absolute; bottom: 14px; left: 14px; background: rgba(255,0,0,0.9); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+.video-meta-panel { padding: 32px 36px; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+.video-channel-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: 8px; }
+.video-channel-tag::before { content: ''; width: 20px; height: 2px; background: var(--cyan); }
+.video-title-text { font-family: 'Syne', sans-serif; font-size: clamp(18px, 2.2vw, 26px); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--white); }
+.video-stats-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.video-stat { display: flex; align-items: center; gap: 8px; }
+.video-stat-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.vsi-date  { background: rgba(0,170,255,0.15); color: var(--cyan); }
+.vsi-views { background: rgba(192,21,42,0.15); color: var(--coral); }
+.vsi-chan  { background: rgba(168,255,62,0.15); color: var(--lime); }
+.video-stat-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 1px; }
+.video-stat-value { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+
+/* ── CHARTS ── */
+.charts-section { padding: 0 40px 60px; position: relative; z-index: 1; }
+.charts-heading { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.charts-heading h2 { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); white-space: nowrap; }
+.charts-heading-line { flex: 1; height: 3px; background: linear-gradient(90deg, var(--yellow), var(--lime), transparent); }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 24px; }
+.chart-card { background: var(--white); border: 2px solid var(--ink); border-radius: 20px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink); transition: transform 0.2s, box-shadow 0.2s; }
+.chart-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+.chart-card-header { padding: 18px 22px 14px; border-bottom: 2px solid var(--paper2); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.chart-company-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.chart-ticker-badge { background: var(--ink); color: var(--cyan); font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 6px; margin-top: 4px; display: inline-block; }
+.chart-change-badge { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; padding: 6px 14px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+.chart-change-badge.up   { background: #e8faf0; color: #16a34a; }
+.chart-change-badge.down { background: #fff0f3; color: var(--coral); }
+.chart-change-badge.flat { background: var(--paper2); color: var(--muted); }
+.chart-subline { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.chart-canvas-wrap { padding: 0; background: var(--ink); height: 280px; position: relative; }
+.chart-card.is-fullscreen { position: fixed !important; inset: 0 !important; z-index: 99999 !important; border-radius: 0 !important; box-shadow: none !important; transform: none !important; display: flex; flex-direction: column; overflow: hidden; }
+.chart-card.is-fullscreen .chart-canvas-wrap { flex: 1; height: auto !important; }
+.chart-card.is-fullscreen .chart-fs-exit { display: flex !important; }
+.chart-fs-exit { display: none; position: fixed; top: 16px; right: 16px; z-index: 100000; background: #c0152a; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; gap: 8px; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+.chart-fullscreen-btn { position: absolute; top: 10px; left: 10px; z-index: 10; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #aaa; font-size: 12px; padding: 4px 8px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.chart-fullscreen-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+.chart-ohlcv-tooltip { position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(10,10,15,0.92); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.9; pointer-events: none; min-width: 160px; backdrop-filter: blur(6px); }
+.chart-ohlcv-tooltip .tt-date  { color: #00aaff; font-weight: 700; margin-bottom: 2px; font-size: 10px; letter-spacing: 0.08em; }
+.chart-ohlcv-tooltip .tt-row  { display: flex; justify-content: space-between; gap: 16px; }
+.chart-ohlcv-tooltip .tt-label { color: #6b6b7a; }
+.chart-ohlcv-tooltip .tt-val   { color: #f5f3ee; font-weight: 600; }
+.chart-ohlcv-tooltip .tt-val.green { color: #22c55e; }
+.chart-ohlcv-tooltip .tt-val.red   { color: #c0152a; }
+.chart-ohlcv-tooltip .tt-vol   { color: var(--yellow); }
+.chart-footer { padding: 10px 22px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--paper2); font-size: 11px; color: var(--muted); }
+.chart-error { height: 280px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; background: var(--paper); color: var(--muted); font-size: 13px; }
+.charts-loading { display: flex; align-items: center; gap: 12px; padding: 30px 0; font-size: 14px; color: var(--muted); }
+
+/* ── SOCIAL ── */
+.social-section { padding: 0 40px 80px; position: relative; z-index: 1; }
+.social-card { background: var(--white); border: 2px solid var(--ink); border-radius: 20px; padding: 28px 32px; box-shadow: 5px 5px 0 var(--ink); }
+.social-loading { display: flex; align-items: center; gap: 12px; padding: 20px 0; font-size: 14px; color: var(--muted); }
+.social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 4px; }
+.social-profile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--paper); border: 1.5px solid var(--border); border-radius: 14px; text-decoration: none; color: var(--ink); transition: all 0.2s; overflow: hidden; }
+.social-profile:hover { border-color: var(--ink); transform: translateY(-3px); box-shadow: 3px 3px 0 var(--ink); background: var(--white); }
+.social-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.social-info { overflow: hidden; }
+.social-platform { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.social-handle { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.social-profile:hover .social-handle { color: var(--purple); }
+.social-none { color: var(--muted); font-style: italic; font-size: 14px; padding: 16px 0; }
+.icon-askfm     { background: #fff0f0; color: #e8192c; }
+.icon-discord   { background: #eeeeff; color: #5865f2; }
+.icon-facebook  { background: #e8eeff; color: #1877f2; }
+.icon-github    { background: #f0e8ff; color: #333; }
+.icon-instagram { background: #fde8f5; color: #e1306c; }
+.icon-linkedin  { background: #e8f0fb; color: #0a66c2; }
+.icon-medium    { background: #f5f5f5; color: #000; }
+.icon-pinterest { background: #ffe8ec; color: #e60023; }
+.icon-steam     { background: #e8eef5; color: #1b2838; }
+.icon-threads   { background: #f0f0f0; color: #000; }
+.icon-tiktok    { background: #e8faf8; color: #010101; }
+.icon-twitch    { background: #f0e8ff; color: #9146ff; }
+.icon-youtube   { background: #ffe8e8; color: #ff0000; }
+.icon-default   { background: var(--paper2); color: var(--muted); }
+.social-channel-heading { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 0.05em; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.social-channel-heading span { background: var(--ink); color: var(--cyan); padding: 4px 14px; border-radius: 8px; font-size: 12px; }
+
+/* ── BLIND SIM BUTTON ── */
+.blindsim-btn-wrap {
+  padding: 0 40px 32px;
+  position: relative; z-index: 1;
+  display: none;
+}
+.blindsim-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--ink); color: var(--white);
+  border: 2px solid var(--ink); border-radius: 14px;
+  padding: 14px 28px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--yellow);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.blindsim-btn:hover {
+  background: var(--yellow); color: var(--ink);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.blindsim-btn i { font-size: 14px; }
+.blindsim-btn-inner { display: flex; flex-direction: column; }
+.blindsim-btn-label { line-height: 1; }
+.blindsim-btn-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.04em; opacity: 0.6;
+  margin-top: 3px; text-transform: none;
+}
+
+/* ── HAMBURGER MENU (mobile only) ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: none; border: none;
+  cursor: pointer; padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.08); }
+.hamburger-btn span {
+  display: block; width: 22px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: all 0.25s;
+  transform-origin: center;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 64px; left: 0; right: 0;
+  background: #0a0a0f;
+  border-bottom: 2px solid var(--cyan);
+  z-index: 9990;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  gap: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none; color: rgba(255,255,255,0.7);
+  transition: all 0.15s;
+}
+.mobile-nav a:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.mobile-nav a.active-page { background: rgba(0,170,255,0.12); color: var(--cyan); }
+.mobile-nav a i { font-size: 15px; width: 20px; text-align: center; }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav    { display: none !important; }
+  .header-badge  { display: none !important; }
+  .header { padding: 0 20px; }
+
+  .hero, .input-section, .phases-section, #finalOutputSection, .video-hero-section, .charts-section, .social-section { padding-left: 20px; padding-right: 20px; }
+  .hero-title { font-size: 48px; }
+  .hero-deco { display: none; }
+  .phases-section { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .full-card { grid-column: span 1; }
+  .footer { padding-left: 20px; padding-right: 20px; }
+  .video-hero-card { grid-template-columns: 1fr; }
+  .video-thumb-wrap { height: 200px; }
+  .video-thumb-overlay { background: linear-gradient(0deg, var(--ink) 0%, transparent 60%); }
+  .video-meta-panel { padding: 20px; }
+  .charts-grid { grid-template-columns: 1fr; }
+  #status { padding: 10px 20px; }
+  .blindsim-btn-wrap { padding-left: 20px; padding-right: 20px; }
+  .social-section { padding-left: 20px; padding-right: 20px; }
+}
+
+/* ── HAMBURGER MOBILE MENU ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.16); }
+.hamburger-btn span {
+  display: block; width: 18px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav {
+    display: none !important;
+    position: fixed !important;
+    top: 64px; left: 0; right: 0;
+    background: #0a0a0f !important;
+    border-bottom: 2px solid rgba(255,255,255,0.1) !important;
+    flex-direction: column !important;
+    padding: 10px 16px 14px !important;
+    gap: 4px !important;
+    z-index: 999 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    border-radius: 0 !important;
+  }
+  .header-nav.open { display: flex !important; }
+  .nav-btn {
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+  .header-badge { display: none !important; }
+  .header-logo { font-size: 18px !important; }
+  .header, .site-header { padding: 0 16px !important; }
+}
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="header-logo" href="/">
+    <div class="header-logo-dot"></div>
+    FinSafe
+  </a>
+  <nav class="header-nav" id="headerNav">
+    <a class="nav-btn home" href="/"><i class="fas fa-bolt"></i> Analyzer</a>
+    <a class="nav-btn news" href="/newsfeed"><i class="fas fa-chart-line"></i> India Markets</a>
+    <a class="nav-btn news" href="/blindsimulation"><i class="fas fa-eye-slash"></i> Blind Sim</a>
+    <a class="nav-btn" href="/about"><i class="fas fa-info-circle"></i> About</a>
+  </nav>
+  <div class="header-badge">Finfluencer Analyzer</div>
+ 
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" onclick="(function(){ var n=document.getElementById('headerNav'); var b=document.getElementById('hamburgerBtn'); n.classList.toggle('open'); b.classList.toggle('open'); })()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/" class="active-page"><i class="fas fa-bolt"></i> Analyzer</a>
+  <a href="/newsfeed"><i class="fas fa-chart-line"></i> India Markets</a>
+  <a href="/blindsimulation"><i class="fas fa-eye-slash"></i> Blind Sim</a>
+  <a href="/about"><i class="fas fa-info-circle"></i> About</a>
+</nav>
+
+<div id="status">Checking server connection…</div>
+
+<section class="hero">
+  <div class="hero-deco">AI</div>
+  <div class="hero-eyebrow">Deep Analysis · AI Powered · Real-time</div>
+  <h1 class="hero-title">
+    FINFLUENCER<br>
+    <span class="accent-coral">TRUTH</span>
+    <span style="color:var(--ink)"> CHECK</span>
+  </h1>
+  <p class="hero-sub">Paste any financial YouTube video. We extract facts, check credibility, scan news, and give you the full picture — in seconds.</p>
+</section>
+
+<div class="input-section">
+  <div class="input-wrapper">
+    <div class="input-icon"><i class="fab fa-youtube" style="color:#ff0000"></i></div>
+    <input id="youtubeUrl" type="url" placeholder="https://youtube.com/watch?v=..."/>
+    <button id="analyzeBtn" onclick="analyze()">
+      <i class="fas fa-bolt"></i> Analyze
+    </button>
+  </div>
+  <div class="analyze-hint">
+    <i class="fas fa-info-circle"></i>
+    Supports any YouTube video URL · Analysis takes 30–60 seconds
+  </div>
+</div>
+
+<div class="phases-section">
+  <div class="phase-panel">
+    <div class="phase-header">
+      <div class="phase-num p1">01</div>
+      <div class="phase-title">Transcript Extraction — Cohere</div>
+    </div>
+    <div class="phase-body">
+      <pre id="cohereFullOutput">(will appear after analysis starts)</pre>
+    </div>
+  </div>
+  <div class="phase-panel">
+    <div class="phase-header">
+      <div class="phase-num p2">02</div>
+      <div class="phase-title">Search Queries — Cohere Generated</div>
+    </div>
+    <div class="phase-body">
+      <pre id="searchQueriesOutput">(will appear after phase 1)</pre>
+    </div>
+  </div>
+</div>
+
+<div id="finalOutputSection" style="display:none;">
+  <div style="padding:0 40px 24px; position:relative; z-index:1;">
+    <div class="results-heading">
+      <h2>Analysis Results</h2>
+      <div class="results-heading-line"></div>
+    </div>
+    <div id="resultsContainer" class="results-grid"></div>
+  </div>
+</div>
+
+
+<div class="blindsim-btn-wrap" id="blindsimBtnWrap">
+  <a class="blindsim-btn" id="blindsimBtn" href="#" target="_blank" rel="noopener">
+    <i class="fas fa-eye-slash"></i>
+    <span class="blindsim-btn-inner">
+      <span class="blindsim-btn-label">Full Detailed Breakdown</span>
+      <span class="blindsim-btn-sub">Beginner-friendly deep dive · Opens in new tab</span>
+    </span>
+    <i class="fas fa-arrow-right"></i>
+  </a>
+</div>
+
+<div id="videoHeroSection" style="display:none;" class="video-hero-section">
+  <div id="videoHeroCard" class="video-hero-card"></div>
+</div>
+
+<div id="chartsSection" style="display:none;" class="charts-section">
+  <div class="charts-heading">
+    <h2>Stock Performance</h2>
+    <div class="charts-heading-line"></div>
+  </div>
+  <div id="chartsContainer">
+    <div class="charts-loading">
+      <div class="spinner"></div>
+      <span>Fetching stock data for mentioned companies…</span>
+    </div>
+  </div>
+</div>
+
+<div id="socialSection" style="display:none;" class="social-section">
+  <div class="social-card">
+    <div class="card-header">
+      <div class="card-header-icon" style="background:rgba(192,21,42,0.12);color:#c0152a;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">
+        <i class="fas fa-share-alt"></i>
+      </div>
+      <div class="card-header-label">Creator's Social Media Profiles</div>
+    </div>
+    <div id="socialChannelHeading" class="social-channel-heading" style="display:none;"></div>
+    <div id="socialContent">
+      <div class="social-loading">
+        <div class="spinner"></div>
+        <span>Searching social media profiles across 13 platforms…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar"></div>
+<footer class="footer">
+  <div class="footer-logo"><div class="header-logo-dot"></div> FinSafe</div>
+  <div class="footer-note">AI-powered finfluencer analysis · <a href="/newsfeed" style="color:rgba(255,255,255,0.4);text-decoration:none;">India Markets →</a></div>
+</footer>
+
+<script>
+let cohereApiKey = null;
+
+window.addEventListener("load", async () => {
+  setStatus("🔄 Loading API keys...");
+  try {
+    const r    = await fetch("/get-cohere-key");
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "Failed to load Cohere API key");
+    cohereApiKey = data.apiKey;
+    setStatus("✅ Connected — ready to analyze!");
+  } catch (err) {
+    setStatus(`❌ Server not reachable. Make sure server.js is running on port 3000. (${err.message})`, true);
+  }
+});
+
+function setStatus(msg, isError = false) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.style.color = isError ? "#c0152a" : "";
+}
+
+function withTimeout(p, ms = 60000) {
+  return Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error("Request timed out")), ms))]);
+}
+
+async function callCohere(prompt) {
+  if (!cohereApiKey) throw new Error("Cohere API key not available");
+  const res  = await fetch("https://api.cohere.com/v1/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${cohereApiKey}` },
+    body: JSON.stringify({ model: "command-a-03-2025", message: prompt, temperature: 0.2, max_tokens: 2000 })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Cohere API error");
+  return data.text;
+}
+
+async function searchWithSerpApi(query) {
+  const res = await fetch("/search-news", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || "News search failed"); }
+  return res.json();
+}
+
+async function checkWebsiteSafety(url) {
+  const res = await fetch("/check-website", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Safety check failed"); }
+  return res.json();
+}
+
+async function fetchVideoData(url) {
+  const res  = await fetch("/get-video-data", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ youtubeUrl: url })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to fetch video data");
+  return { channel: data.channel, date: data.date, transcript: data.transcript, title: data.title, thumbnail: data.thumbnail, viewCount: data.viewCount, videoId: data.videoId };
+}
+
+function getVerdict(score) {
+  if (score >= 80) return "Highly reliable";
+  if (score >= 60) return "Generally trustworthy";
+  if (score >= 40) return "Mixed signals — verify claims";
+  return "Use with caution";
+}
+
+function renderSafetyBadge(result) {
+  const b = document.getElementById("safety-badge");
+  const s = document.getElementById("safety-stats");
+  if (!b) return;
+  if (result.safe === null) {
+    b.className = "safety-badge unknown";
+    b.innerHTML = `<i class="fas fa-question-circle"></i> Unknown`;
+    if (s) s.textContent = result.message || "Could not determine";
+    return;
+  }
+  if (result.safe) {
+    b.className = "safety-badge safe";
+    b.innerHTML = `<i class="fas fa-check-circle"></i> Safe`;
+  } else {
+    b.className = "safety-badge unsafe";
+    b.innerHTML = `<i class="fas fa-skull-crossbones"></i> Unsafe`;
+  }
+  if (s) s.textContent = `${result.malicious} malicious · ${result.suspicious} suspicious · ${result.harmless} harmless`;
+}
+
+function displayResults(parsed, newsItems) {
+  const section   = document.getElementById("finalOutputSection");
+  const container = document.getElementById("resultsContainer");
+  container.innerHTML = "";
+
+  const credScore = parsed.credibility_score <= 10 ? parsed.credibility_score * 10 : parsed.credibility_score;
+  const accScore  = parsed.accuracy_score    <= 10 ? parsed.accuracy_score    * 10 : parsed.accuracy_score;
+
+  const trust = document.createElement("div");
+  trust.className = "score-card trust";
+  trust.innerHTML = `
+    <div class="score-label"><i class="fas fa-shield-alt"></i> Trust Score</div>
+    <div class="score-number">${credScore}<span class="score-denom">/100</span></div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${credScore}%"></div></div>
+    <div class="score-verdict">${getVerdict(credScore)}</div>`;
+
+  const accuracy = document.createElement("div");
+  accuracy.className = "score-card accuracy";
+  accuracy.innerHTML = `
+    <div class="score-label"><i class="fas fa-bullseye"></i> Accuracy Score</div>
+    <div class="score-number">${accScore}<span class="score-denom">/100</span></div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${accScore}%"></div></div>
+    <div class="score-verdict">${getVerdict(accScore)}</div>`;
+
+  const summary = document.createElement("div");
+  summary.className = "full-card";
+  summary.innerHTML = `
+    <div class="card-header"><div class="card-header-icon icon-summary"><i class="fas fa-flag"></i></div><div class="card-header-label">Simple Summary</div></div>
+    <div class="card-text">${parsed.beginner_summary}</div>`;
+
+  const overview = document.createElement("div");
+  overview.className = "full-card";
+  overview.innerHTML = `
+    <div class="card-header"><div class="card-header-icon icon-overview"><i class="fas fa-newspaper"></i></div><div class="card-header-label">Content Overview</div></div>
+    <div class="card-text">${parsed.summary}</div>`;
+
+  const risk = document.createElement("div");
+  risk.className = "full-card";
+  let riskHtml = "";
+  if (parsed.risk_flags?.length) {
+    parsed.risk_flags.forEach(r => { riskHtml += `<span class="risk-tag"><i class="fas fa-exclamation-triangle"></i>${r}</span>`; });
+  } else { riskHtml = `<span class="risk-tag">No significant risks identified</span>`; }
+  risk.innerHTML = `
+    <div class="card-header"><div class="card-header-icon icon-risk"><i class="fas fa-exclamation-circle"></i></div><div class="card-header-label">Risk Flags</div></div>
+    <div class="risk-tags">${riskHtml}</div>`;
+
+  const web = document.createElement("div");
+  web.className = "full-card";
+  const webBody = parsed.website
+    ? `<div class="safety-row"><a href="${parsed.website}" target="_blank" class="website-link"><i class="fas fa-external-link-alt"></i>${parsed.website}</a><span id="safety-badge" class="safety-badge checking"><i class="fas fa-spinner fa-spin"></i> Checking...</span></div><div id="safety-stats" class="safety-stats"></div>`
+    : `<span style="color:var(--muted);font-size:14px">No website found for this creator.</span>`;
+  web.innerHTML = `
+    <div class="card-header"><div class="card-header-icon icon-web"><i class="fas fa-globe"></i></div><div class="card-header-label">Creator's Website</div></div>
+    ${webBody}`;
+
+  const news = document.createElement("div");
+  news.className = "full-card";
+  let newsHtml = "";
+  if (newsItems?.length) {
+    newsHtml = '<div class="news-items-grid">';
+    newsItems.slice(0, 6).forEach(item => {
+      const date    = item.date ? new Date(item.date).toLocaleDateString() : "Date unknown";
+      const source  = item.source || "Unknown";
+      const snippet = (item.snippet || item.title || "").substring(0, 100);
+      newsHtml += `<div class="news-item"><div class="news-title"><a href="${item.link}" target="_blank">${item.title}</a></div><div class="news-snippet">${snippet}${snippet.length === 100 ? "…" : ""}</div><div class="news-meta"><span><i class="fas fa-rss"></i> ${source}</span><span><i class="far fa-calendar"></i> ${date}</span></div></div>`;
+    });
+    newsHtml += '</div>';
+  } else { newsHtml = '<div class="no-news"><i class="fas fa-info-circle"></i> No related news articles found</div>'; }
+  news.innerHTML = `
+    <div class="card-header"><div class="card-header-icon icon-news"><i class="fas fa-newspaper"></i></div><div class="card-header-label">Related News & Articles</div></div>
+    ${newsHtml}`;
+
+  [trust, accuracy, summary, overview, risk, web, news].forEach(c => container.appendChild(c));
+  section.style.display = "block";
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  if (parsed.website) {
+    checkWebsiteSafety(parsed.website)
+      .then(r => renderSafetyBadge(r))
+      .catch(() => renderSafetyBadge({ safe: null, message: "Check failed" }));
+  }
+}
+
+async function analyze() {
+  const url  = document.getElementById("youtubeUrl").value.trim();
+  const btn  = document.getElementById("analyzeBtn");
+  const pre1 = document.getElementById("cohereFullOutput");
+  const pre2 = document.getElementById("searchQueriesOutput");
+
+  document.getElementById("finalOutputSection").style.display = "none";
+  if (!url) { alert("Please paste a YouTube URL."); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin-wrap"><div class="spinner"></div> Analyzing…</div>';
+  document.querySelectorAll(".error-message").forEach(e => e.remove());
+
+  try {
+    setStatus("📥 Fetching transcript from server…");
+    const videoData = await fetchVideoData(url);
+    const { channel, date, transcript } = videoData;
+
+    let rawDate = new Date().toISOString().split('T')[0];
+    if (videoData.date) {
+      const parsed = new Date(videoData.date);
+      if (!isNaN(parsed.getTime())) rawDate = parsed.toISOString().split('T')[0];
+    }
+
+    renderVideoHero(videoData);
+
+    setStatus("🔎 Phase 1 — Cohere transcript extraction…");
+    const fullPrompt = `You are a professional financial analyst.\n\nStrictly Extract only the following from the transcript and no extra sentence of your own:\n- Company Name\n- Investment Thesis\n- Valuation\n- Dividend Safety\n- Growth Outlook\n- Risks\n- Price Target\n- Time Frame (in "dd-mm-yyyy" format)\n\nTranscript:\n${transcript}`;
+    const cohereAnalysis = await withTimeout(callCohere(fullPrompt), 60000);
+    pre1.textContent = cohereAnalysis;
+
+    setStatus("🔍 Phase 2 — Generating search queries…");
+    const queryPrompt = `You are a financial news researcher. Based on the following transcript analysis, generate 3-5 specific search queries to find recent news articles and financial reports about the companies mentioned.\n\nTranscript Analysis:\n${cohereAnalysis}\n\nReturn ONLY a JSON array of search query strings. No other text. Example format:\n["Tesla Q4 2024 earnings report", "Tesla delivery numbers 2025", "Elon Musk Tesla controversy 2025"]`;
+    const queriesRes = await withTimeout(callCohere(queryPrompt), 60000);
+    pre2.textContent = queriesRes;
+
+    let queries = [];
+    try { const m = queriesRes.match(/\[[\s\S]*\]/); if (m) queries = JSON.parse(m[0]); } catch(e) {}
+
+    setStatus("🔍 Phase 3 — Searching news with SerpAPI…");
+    let allNews = [];
+    for (const q of queries.slice(0, 3)) {
+      try { allNews = [...allNews, ...(await searchWithSerpApi(q))]; } catch(e) {}
+      await new Promise(r => setTimeout(r, 500));
+    }
+    const uniqueNews = Array.from(new Map(allNews.map(i => [i.title, i])).values());
+
+    setStatus("🔍 Phase 4 — Sonar-Pro researching creator credibility…");
+    let researchText = "Research unavailable.";
+    try {
+      if (typeof puter === 'undefined') throw new Error('Puter not loaded');
+      const researchRes = await withTimeout(
+        puter.ai.chat(`You are researching a financial YouTuber.\n\nChannel: ${channel}\nPublish Date: ${date}\n\nBased on this, research about the youtuber:\n- Historical credibility\n- Public reputation\n- Known controversies\n- Pattern of hype vs responsibility\n- Long-term reliability\n- the youtuber's personal website or blog they own.`, { model: "perplexity/sonar-pro", max_tokens: 1500 }),
+        60000
+      );
+      researchText = researchRes.text || researchRes.toString();
+    } catch(e) {
+      console.warn('[puter] Phase 4 skipped:', e.message);
+      researchText = `Channel: ${channel}. Research phase unavailable (Puter offline).`;
+    }
+
+    setStatus("📊 Phase 5 — Generating credibility score…");
+    let finalText = '';
+    try {
+      if (typeof puter === 'undefined') throw new Error('Puter not loaded');
+      const scoringRes = await withTimeout(
+        puter.ai.chat(`You are a structured financial evaluation engine.\n\nReturn ONLY valid JSON. No markdown. No extra text.\n\n{\n  "accuracy_score": number,\n  "credibility_score": number,\n  "beginner_summary": "simple explanation",\n  "summary": "neutral professional evaluation",\n  "risk_flags": ["warnings"],\n  "website": URL\n}\n\nCohere Analysis:\n${cohereAnalysis}\n\nResearch Summary:\n${researchText}`, { model: "perplexity/sonar-pro", max_tokens: 1200 }),
+        60000
+      );
+      finalText = scoringRes.text || scoringRes.toString();
+    } catch(e) {
+      console.warn('[puter] Phase 5 skipped:', e.message);
+      setStatus("📊 Phase 5 — Scoring via Cohere fallback…");
+      finalText = await callCohere(`You are a structured financial evaluation engine.\nReturn ONLY valid JSON, no markdown.\n{\n  "accuracy_score": number (0-100),\n  "credibility_score": number (0-100),\n  "beginner_summary": "one sentence simple explanation",\n  "summary": "neutral professional evaluation in 2-3 sentences",\n  "risk_flags": ["key warning 1", "key warning 2"],\n  "website": ""\n}\n\nAnalysis to evaluate:\n${cohereAnalysis}`);
+    }
+
+    const match = finalText.match(/\{[\s\S]*\}/);
+    if (!match) {
+      setStatus("⚠️ Invalid JSON returned. Check phase 1 panel for raw output.", true);
+      pre1.textContent = "⚠️ Raw output:\n\n" + finalText;
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-bolt"></i> Analyze';
+      return;
+    }
+
+    const parsed = JSON.parse(match[0]);
+
+    fetch("/save-analysis", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        video_id: videoData.videoId||null, video_url: url||null, channel_name: channel||null,
+        video_title: videoData.title||null, publish_date: rawDate||null, thumbnail: videoData.thumbnail||null,
+        accuracy_score: (parsed.accuracy_score <= 10 ? parsed.accuracy_score * 10 : parsed.accuracy_score)||null, credibility_score: (parsed.credibility_score <= 10 ? parsed.credibility_score * 10 : parsed.credibility_score)||null,
+        beginner_summary: parsed.beginner_summary||null, summary: parsed.summary||null,
+        risk_flags: Array.isArray(parsed.risk_flags)?parsed.risk_flags:[], companies: parsed.companies||null,
+        cohere_raw: cohereAnalysis||null, website: parsed.website||null,
+      })
+    }).then(r=>r.json()).then(d=>d.success?console.log('[supabase] ✓ saved'):console.error('[supabase]',d.error)).catch(e=>console.error('[supabase]',e.message));
+
+    displayResults(parsed, uniqueNews);
+
+    const _bsWrap = document.getElementById('blindsimBtnWrap');
+    const _bsBtn  = document.getElementById('blindsimBtn');
+    if (_bsWrap && _bsBtn) {
+      _bsBtn.href = '/blindsimulation?v=' + encodeURIComponent(url);
+      _bsWrap.style.display = 'block';
+    }
+
+    setStatus("✅ Analysis complete — loading charts & social profiles…");
+    renderStockCharts(cohereAnalysis, rawDate).catch(e => console.error('[charts crash]', e));
+    findSocialMedia(channel).then(() => setStatus("✅ Analysis complete!"));
+
+  } catch (err) {
+    console.error(err);
+    setStatus("❌ Error: " + err.message, true);
+    const errDiv = document.createElement("div");
+    errDiv.className = "error-message";
+    errDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${err.message}`;
+    document.getElementById("finalOutputSection").insertAdjacentElement("beforebegin", errDiv);
+    setTimeout(() => errDiv.remove(), 6000);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-bolt"></i> Analyze';
+}
+
+const PLATFORM_META = {
+  askfm:     { icon:'fas fa-question-circle', cls:'icon-askfm',     label:'Ask.fm'    },
+  discord:   { icon:'fab fa-discord',         cls:'icon-discord',   label:'Discord'   },
+  facebook:  { icon:'fab fa-facebook',        cls:'icon-facebook',  label:'Facebook'  },
+  github:    { icon:'fab fa-github',          cls:'icon-github',    label:'GitHub'    },
+  instagram: { icon:'fab fa-instagram',       cls:'icon-instagram', label:'Instagram' },
+  linkedin:  { icon:'fab fa-linkedin',        cls:'icon-linkedin',  label:'LinkedIn'  },
+  medium:    { icon:'fab fa-medium',          cls:'icon-medium',    label:'Medium'    },
+  pinterest: { icon:'fab fa-pinterest',       cls:'icon-pinterest', label:'Pinterest' },
+  steam:     { icon:'fab fa-steam',           cls:'icon-steam',     label:'Steam'     },
+  threads:   { icon:'fas fa-at',              cls:'icon-threads',   label:'Threads'   },
+  tiktok:    { icon:'fab fa-tiktok',          cls:'icon-tiktok',    label:'TikTok'    },
+  twitch:    { icon:'fab fa-twitch',          cls:'icon-twitch',    label:'Twitch'    },
+  youtube:   { icon:'fab fa-youtube',         cls:'icon-youtube',   label:'YouTube'   },
+};
+
+async function findSocialMedia(channelName) {
+  const section = document.getElementById("socialSection");
+  const content = document.getElementById("socialContent");
+  const heading = document.getElementById("socialChannelHeading");
+  if (heading) { heading.innerHTML = `<i class="fas fa-user-circle" style="color:var(--coral)"></i> <span>${channelName}</span>`; heading.style.display = "flex"; }
+  section.style.display = "block";
+  try {
+    const res  = await fetch("/find-social-media", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profileName: channelName })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Social media search failed");
+    const profiles = data.profiles || [];
+    if (!profiles.length) { content.innerHTML = '<div class="social-none"><i class="fas fa-search" style="margin-right:8px;"></i>No social media profiles found for this creator.</div>'; return; }
+    const allLinks = profiles.filter(item=>item.socialProfileUrl).map(item=>({
+      platform: (item.social||'').toLowerCase(), url: item.socialProfileUrl,
+      handle: (() => { try { return new URL(item.socialProfileUrl).pathname.replace(/^\//,'').split('/')[0]; } catch { return item.inputProfileName||''; } })()
+    }));
+    if (!allLinks.length) { content.innerHTML = '<div class="social-none">No social media profiles found for this creator.</div>'; return; }
+    let html = '<div class="social-grid">';
+    allLinks.forEach(({ platform, url, handle }) => {
+      const meta = PLATFORM_META[platform] || { icon:'fas fa-globe', cls:'icon-default', label: platform||'Web' };
+      const displayHandle = handle ? (handle.startsWith('@') ? handle : '@' + handle) : url;
+      html += `<a class="social-profile" href="${url}" target="_blank" rel="noopener"><div class="social-icon ${meta.cls}"><i class="${meta.icon}"></i></div><div class="social-info"><div class="social-platform">${meta.label}</div><div class="social-handle">${displayHandle}</div></div></a>`;
+    });
+    html += '</div>'; content.innerHTML = html;
+  } catch (err) {
+    content.innerHTML = `<div class="social-none" style="color:var(--coral)"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>${err.message}</div>`;
+  }
+}
+
+function renderVideoHero(videoData) {
+  const section = document.getElementById('videoHeroSection');
+  const card    = document.getElementById('videoHeroCard');
+  if (!videoData || !videoData.title) { section.style.display = 'none'; return; }
+  const thumb   = videoData.thumbnail || `https://img.youtube.com/vi/${videoData.videoId||''}/maxresdefault.jpg`;
+  const title   = videoData.title || 'Unknown Title';
+  const channel = videoData.channel || 'Unknown Channel';
+  const rawDate = videoData.date ? videoData.date.split('T')[0] : new Date().toISOString().split('T')[0];
+  const date    = rawDate !== '—' ? new Date(rawDate).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) : '—';
+  const views   = videoData.viewCount ? Number(videoData.viewCount).toLocaleString('en-IN') : '—';
+  card.innerHTML = `
+    <div class="video-thumb-wrap">
+      <img src="${thumb}" alt="${title}" onerror="this.src='https://img.youtube.com/vi/default/maxresdefault.jpg'">
+      <div class="video-thumb-overlay"></div>
+      <div class="video-play-badge"><i class="fab fa-youtube"></i> YouTube</div>
+    </div>
+    <div class="video-meta-panel">
+      <div class="video-channel-tag">${channel}</div>
+      <div class="video-title-text">${title}</div>
+      <div class="video-stats-row">
+        <div class="video-stat"><div class="video-stat-icon vsi-date"><i class="far fa-calendar-alt"></i></div><div class="video-stat-info"><div class="video-stat-label">Upload Date</div><div class="video-stat-value">${date}</div></div></div>
+        <div class="video-stat"><div class="video-stat-icon vsi-views"><i class="fas fa-eye"></i></div><div class="video-stat-info"><div class="video-stat-label">Views</div><div class="video-stat-value">${views}</div></div></div>
+        <div class="video-stat"><div class="video-stat-icon vsi-chan"><i class="fas fa-user-circle"></i></div><div class="video-stat-info"><div class="video-stat-label">Channel</div><div class="video-stat-value">${channel}</div></div></div>
+      </div>
+    </div>`;
+  section.style.display = 'block';
+}
+
+async function renderStockCharts(cohereAnalysis, videoDate) {
+  const section   = document.getElementById('chartsSection');
+  const container = document.getElementById('chartsContainer');
+  section.style.display = 'block';
+  container.innerHTML = `
+    <div id="chartsDiagWrap" style="background:#0a0a0f;border-radius:12px;padding:14px 18px;margin-bottom:20px;border:1px solid rgba(0,170,255,0.2)">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#00aaff;margin-bottom:8px"><i class="fas fa-terminal" style="margin-right:6px"></i>Chart Pipeline</div>
+      <div id="chartsDiagLog" style="max-height:140px;overflow-y:auto"></div>
+    </div>
+    <div class="charts-grid" id="chartsGrid"></div>`;
+  const grid = document.getElementById('chartsGrid');
+
+  function diag(msg, color) {
+    const el = document.getElementById('chartsDiagLog'); if (!el) return;
+    const d = document.createElement('div');
+    d.style.cssText = `font-family:monospace;font-size:11px;line-height:1.8;color:${color||'#a0ffa0'}`;
+    d.textContent = '› ' + msg; el.appendChild(d); el.scrollTop = el.scrollHeight;
+  }
+
+  diag('Calling /extract-companies on server…');
+  let companies = [];
+  try {
+    const r = await fetch('/extract-companies', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: cohereAnalysis }) });
+    const d = await r.json();
+    companies = d.companies || [];
+    diag(`Found ${companies.length} companies: ${companies.map(c=>c.name+(c.ticker?'('+c.ticker+')':'')).join(', ')}`, companies.length ? '#a0ffa0' : '#c0152a');
+  } catch(e) { diag('extract-companies failed: '+e.message,'#c0152a'); return; }
+
+  if (!companies.length) { container.innerHTML = '<div style="padding:24px;color:#6b6b7a;font-size:13px"><i class="fas fa-info-circle" style="margin-right:8px"></i>No companies identified in this analysis.</div>'; return; }
+
+  const fromDate = (() => { const d = new Date(videoDate); d.setMonth(d.getMonth()-1); return d.toISOString().split('T')[0]; })();
+  const toDate   = new Date().toISOString().split('T')[0];
+  diag(`Range: ${fromDate} → ${toDate}  |  Publish: ${videoDate}`);
+
+  let built = 0;
+  for (const co of companies.slice(0, 5)) {
+    diag(`Fetching: ${co.name} [${co.ticker||'?'}]`);
+    let symbol = co.ticker || null;
+    if (!symbol) {
+      try {
+        const r = await fetch('/resolve-ticker', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ query: co.name }) });
+        if (r.ok) { const d = await r.json(); symbol = d.symbol || null; }
+      } catch(e) {}
+    }
+    if (!symbol) { diag(`  ✗ Could not resolve ticker for: ${co.name}`, '#ffaa44'); appendErrorCard(grid, co.name, '?', 'Ticker not found'); built++; continue; }
+
+    let raw = null;
+    try {
+      const r = await fetch('/get-stock-data', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ symbol, from: fromDate, to: toDate }) });
+      if (r.ok) raw = await r.json();
+      else { const e = await r.json(); diag(`  ✗ ${symbol}: ${e.error}`, '#c0152a'); }
+    } catch(e) { diag(`  ✗ fetch error: ${e.message}`, '#c0152a'); }
+
+    if (!raw || !raw.t?.length) { appendErrorCard(grid, co.name, symbol, 'No price data'); built++; continue; }
+    diag(`  ✓ ${symbol}: ${raw.t.length} candles`);
+    appendChartCard(grid, co.name, symbol, raw, videoDate, fromDate, toDate);
+    built++;
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  if (built > 0) { setTimeout(() => { const w = document.getElementById('chartsDiagWrap'); if (w) w.style.display = 'none'; }, 2500); }
+}
+
+function appendErrorCard(grid, name, symbol, reason) {
+  const card = document.createElement('div'); card.className = 'chart-card';
+  card.innerHTML = `<div class="chart-card-header"><div><div class="chart-company-name">${name}</div><div class="chart-ticker-badge">${symbol}</div></div></div><div class="chart-error"><i class="fas fa-chart-line" style="font-size:24px;opacity:0.3;margin-bottom:8px"></i><span>${reason}</span></div>`;
+  grid.appendChild(card);
+}
+
+function appendChartCard(grid, name, symbol, raw, publishDate, fromDate, toDate) {
+  const seen = new Map();
+  for (let i = 0; i < raw.t.length; i++) {
+    if (!raw.o[i] || !raw.c[i]) continue;
+    const d = new Date(raw.t[i] * 1000);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+    seen.set(key, { time:key, open:raw.o[i], high:raw.h[i], low:raw.l[i], close:raw.c[i], volume:raw.v[i]||0 });
+  }
+  const candles = Array.from(seen.values()).sort((a,b) => a.time < b.time ? -1 : 1);
+  const volumes = candles.map(c => ({ time:c.time, value:c.volume, color: c.close>=c.open ? 'rgba(34,197,94,0.4)' : 'rgba(192,21,42,0.4)' }));
+  if (!candles.length) { appendErrorCard(grid, name, symbol, 'No valid candles'); return; }
+
+  const pubCandle  = candles.find(c => c.time >= publishDate) || candles[0];
+  const lastCandle = candles[candles.length - 1];
+  const pct        = pubCandle?.close ? ((lastCandle.close - pubCandle.close) / pubCandle.close * 100).toFixed(2) : null;
+  const changeClass = !pct ? 'flat' : Number(pct) >= 0 ? 'up' : 'down';
+  const changeText  = pct ? `${Number(pct) >= 0 ? '▲' : '▼'} ${Math.abs(pct)}%` : '—';
+  const canvasId    = `cc-${symbol}-${Date.now()}`;
+  const tooltipId   = `tt-${canvasId}`;
+
+  const card = document.createElement('div'); card.className = 'chart-card';
+  card.innerHTML = `
+    <button class="chart-fs-exit" onclick="toggleChartFullscreen(this.closest('.chart-card').querySelector('.chart-fullscreen-btn'))"><i class="fas fa-compress"></i> Exit Fullscreen &nbsp;·&nbsp; Esc</button>
+    <div class="chart-card-header">
+      <div><div class="chart-company-name">${name}</div><div class="chart-ticker-badge">${symbol}</div><div class="chart-subline">${candles.length} days · ${fromDate} → ${toDate}</div></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="chart-change-badge ${changeClass}">${changeText}</div>
+        <button class="chart-fullscreen-btn" title="Fullscreen" onclick="toggleChartFullscreen(this)"><i class="fas fa-expand"></i></button>
+      </div>
+    </div>
+    <div class="chart-canvas-wrap" id="${canvasId}" style="position:relative"><div class="chart-ohlcv-tooltip" id="${tooltipId}" style="display:none"></div></div>
+    <div class="chart-footer">
+      <span>At publish: <strong>$${pubCandle?.close?.toFixed(2)||'—'}</strong></span>
+      <span>Today: <strong>$${lastCandle?.close?.toFixed(2)||'—'}</strong></span>
+      <span style="color:#6b6b7a"><i class="fas fa-info-circle" style="margin-right:4px"></i>Hover chart for OHLCV · Yahoo Finance</span>
+    </div>`;
+  grid.appendChild(card);
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const el      = document.getElementById(canvasId);
+    const tooltip = document.getElementById(tooltipId);
+    if (!el) return;
+    el.style.height = '320px';
+    const w = el.getBoundingClientRect().width || el.offsetWidth || 600;
+    try {
+      const chart = LightweightCharts.createChart(el, {
+        width: w, height: 320,
+        layout: { background: { type:'solid', color:'#0a0a0f' }, textColor:'#888', fontSize:11 },
+        grid:   { vertLines: { color:'rgba(255,255,255,0.04)' }, horzLines: { color:'rgba(255,255,255,0.04)' } },
+        crosshair: { mode:1 },
+        rightPriceScale: { borderColor:'rgba(255,255,255,0.1)' },
+        timeScale: { borderColor:'rgba(255,255,255,0.1)', timeVisible:true, secondsVisible:false },
+      });
+      const volS = chart.addHistogramSeries({ color:'rgba(100,100,100,0.3)', priceFormat:{type:'volume'}, priceScaleId:'vol' });
+      chart.priceScale('vol').applyOptions({ scaleMargins:{ top:0.78, bottom:0 } });
+      volS.setData(volumes);
+      const candleS = chart.addCandlestickSeries({ upColor:'#22c55e', downColor:'#c0152a', borderUpColor:'#22c55e', borderDownColor:'#c0152a', wickUpColor:'#22c55e', wickDownColor:'#c0152a' });
+      chart.priceScale('right').applyOptions({ scaleMargins:{ top:0.05, bottom:0.25 } });
+      candleS.setData(candles);
+      const markerCandle = candles.find(c => c.time >= publishDate) || candles[0];
+      if (markerCandle) candleS.setMarkers([{ time:markerCandle.time, position:'aboveBar', color:'#ffe045', shape:'arrowDown', text:'▼ Published', size:2 }]);
+      chart.timeScale().fitContent();
+      const candleMap = new Map(candles.map(c => [c.time, c]));
+      chart.subscribeCrosshairMove(param => {
+        if (!param.time || !tooltip) { if (tooltip) tooltip.style.display = 'none'; return; }
+        const c = candleMap.get(param.time); if (!c) { tooltip.style.display = 'none'; return; }
+        const isUp = c.close >= c.open; const clr = isUp ? 'green' : 'red';
+        const chg  = ((c.close - c.open) / c.open * 100).toFixed(2);
+        const volFmt = c.volume >= 1e6 ? (c.volume/1e6).toFixed(2)+'M' : c.volume >= 1e3 ? (c.volume/1e3).toFixed(0)+'K' : c.volume;
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `<div class="tt-date">${c.time}</div><div class="tt-row"><span class="tt-label">O</span><span class="tt-val">$${c.open.toFixed(2)}</span></div><div class="tt-row"><span class="tt-label">H</span><span class="tt-val">$${c.high.toFixed(2)}</span></div><div class="tt-row"><span class="tt-label">L</span><span class="tt-val">$${c.low.toFixed(2)}</span></div><div class="tt-row"><span class="tt-label">C</span><span class="tt-val ${clr}">$${c.close.toFixed(2)}</span></div><div class="tt-row"><span class="tt-label">Chg</span><span class="tt-val ${clr}">${isUp?'+':''}${chg}%</span></div><div class="tt-row"><span class="tt-label">Vol</span><span class="tt-val tt-vol">${volFmt}</span></div>`;
+      });
+      new ResizeObserver(() => {
+        const nw = el.getBoundingClientRect().width || el.offsetWidth || 600;
+        const nh = el.getBoundingClientRect().height || el.offsetHeight || 320;
+        if (nw > 0 && nh > 0) { chart.applyOptions({ width:nw, height:nh }); chart.timeScale().fitContent(); }
+      }).observe(el);
+    } catch(err) { el.innerHTML = `<div style="color:#c0152a;padding:20px;font-size:12px;font-family:monospace">Chart error: ${err.message}</div>`; }
+  }));
+}
+
+function toggleChartFullscreen(btn) {
+  const card = btn.closest('.chart-card');
+  const isFs = card.classList.toggle('is-fullscreen');
+  btn.innerHTML = isFs ? '<i class="fas fa-compress"></i> Exit' : '<i class="fas fa-expand"></i>';
+  btn.title = isFs ? 'Exit fullscreen (or press Esc)' : 'Fullscreen';
+  document.body.style.overflow = isFs ? 'hidden' : '';
+  setTimeout(() => { const wrap = card.querySelector('.chart-canvas-wrap'); if (wrap) { const ro = new ResizeObserver(() => ro.disconnect()); ro.observe(wrap); } }, 50);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const fsCard = document.querySelector('.chart-card.is-fullscreen');
+    if (fsCard) { fsCard.classList.remove('is-fullscreen'); const btn = fsCard.querySelector('.chart-fullscreen-btn'); if (btn) { btn.innerHTML = '<i class="fas fa-expand"></i>'; btn.title = 'Fullscreen'; } document.body.style.overflow = ''; }
+  }
+});
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('hamburgerBtn');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  if (!nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+<!-- ── PROFILE WIDGET ── -->
+<div id="profileWidget" style="display:none">
+  <button id="profileBubble" onclick="toggleProfileMenu()" title="Account">
+    <span id="profileInitial">?</span>
+  </button>
+  <div id="profileMenu" class="profile-menu hidden">
+    <div class="profile-menu-top">
+      <div class="profile-avatar-lg" id="profileAvatarLg">?</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileEmail">Loading…</div>
+        <div class="profile-since" id="profileSince"></div>
+      </div>
+    </div>
+    <div class="profile-menu-divider"></div>
+    <button class="profile-menu-item logout" onclick="handleLogout()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Sign Out
+    </button>
+  </div>
+</div>
+
+<style>
+#profileBubble {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: #000; border: 2.5px solid #000;
+  box-shadow: 3px 3px 0 #f5a623; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+#profileBubble:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 #f5a623; }
+#profileInitial { font-family: 'Syne', 'Arial', sans-serif; font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -0.02em; user-select: none; }
+.profile-menu { position: fixed; bottom: 80px; right: 24px; z-index: 9998; background: #fff; border: 2.5px solid #000; border-radius: 0; box-shadow: 6px 6px 0 #000; min-width: 220px; padding: 0; overflow: hidden; animation: profileMenuIn 0.18s ease both; }
+.profile-menu.hidden { display: none; }
+@keyframes profileMenuIn { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.profile-menu-top { display: flex; align-items: center; gap: 12px; padding: 16px; background: #000; }
+.profile-avatar-lg { width: 38px; height: 38px; border-radius: 50%; background: #f5a623; border: 2px solid #f5a623; display: flex; align-items: center; justify-content: center; font-family: 'Syne', 'Arial', sans-serif; font-size: 16px; font-weight: 800; color: #000; flex-shrink: 0; user-select: none; }
+.profile-info { overflow: hidden; }
+.profile-name { font-family: 'Syne', 'Arial', sans-serif; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; letter-spacing: 0.02em; }
+.profile-since { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; letter-spacing: 0.04em; font-family: monospace; }
+.profile-menu-divider { height: 2px; background: #000; }
+.profile-menu-item { width: 100%; background: none; border: none; padding: 13px 16px; font-family: 'Syne', 'Arial', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s, color 0.15s; }
+.profile-menu-item.logout { color: #c0152a; }
+.profile-menu-item.logout:hover { background: #c0152a; color: #fff; }
+.profile-menu-item.logout:hover svg { stroke: #fff; }
+</style>
+<script>
+(async function initProfileWidget() {
+  if (!window.supabase) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  let sb = null;
+  try {
+    const [keyRes, cfgRes] = await Promise.all([
+      fetch('/get-supabase-anon-key').then(r => r.json()),
+      fetch('/api/config').then(r => r.json()),
+    ]);
+    const anonKey = keyRes.anonKey;
+    const supabaseUrl = cfgRes.supabaseUrl;
+    if (!anonKey || !supabaseUrl) throw new Error('Missing Supabase config');
+    sb = window.supabase.createClient(supabaseUrl, anonKey);
+  } catch (e) { console.warn('[profile-widget] Could not init Supabase:', e.message); return; }
+  const hasOAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('error_description');
+  if (hasOAuthHash) { await new Promise(r => setTimeout(r, 1500)); }
+  let session = null;
+  for (let i = 0; i < 5; i++) {
+    const { data } = await sb.auth.getSession();
+    if (data?.session) { session = data.session; break; }
+    await new Promise(r => setTimeout(r, 500));
+  }
+  if (!session) { if (!window.location.pathname.startsWith('/auth')) { window.location.href = '/auth'; } return; }
+  const user = session.user;
+  const email = user.email || 'User';
+  const initial = email.charAt(0).toUpperCase();
+  const since = new Date(user.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  document.getElementById('profileInitial').textContent = initial;
+  document.getElementById('profileAvatarLg').textContent = initial;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('profileSince').textContent = 'Member since ' + since;
+  document.getElementById('profileWidget').style.display = 'block';
+  window._profileSb = sb;
+})();
+
+function toggleProfileMenu() {
+  const menu = document.getElementById('profileMenu');
+  menu.classList.toggle('hidden');
+}
+document.addEventListener('click', function(e) {
+  const widget = document.getElementById('profileWidget');
+  if (widget && !widget.contains(e.target)) {
+    const menu = document.getElementById('profileMenu');
+    if (menu) menu.classList.add('hidden');
+  }
+});
+async function handleLogout() {
+  try { if (window._profileSb) await window._profileSb.auth.signOut(); } catch(e) {}
+  window.location.href = '/auth';
+}
+</script>
+<script>
+/* Close hamburger on nav-link click or outside-click */
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('headerNav');
+  var btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    }
+  });
+});
+</script>
+</body>
+</html>

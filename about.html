@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinSafe — About</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green:      #00ff41;
+  --green2:     #00cc33;
+  --green3:     #009922;
+  --green-dim:  rgba(0,255,65,0.12);
+  --green-glow: rgba(0,255,65,0.06);
+  --red:        #ff2244;
+  --red2:       #cc1133;
+  --red-dim:    rgba(255,34,68,0.12);
+  --amber:      #ffb800;
+  --amber-dim:  rgba(255,184,0,0.1);
+  --cyan:       #00e5ff;
+  --cyan-dim:   rgba(0,229,255,0.1);
+  --bg:         #030a03;
+  --bg2:        #060f06;
+  --bg3:        #0a170a;
+  --border:     rgba(0,255,65,0.18);
+  --border2:    rgba(0,255,65,0.08);
+  --text:       #c8ffd4;
+  --text2:      #7ab87a;
+  --text3:      #3d6b3d;
+  --white:      #e8ffe8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none; z-index: 999;
+  animation: scanMove 8s linear infinite;
+}
+@keyframes scanMove {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(3,10,3,0.95);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 60px;
+  border-bottom: 1px solid var(--green);
+  backdrop-filter: blur(10px);
+}
+
+.header::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green), 0 0 24px rgba(0,255,65,0.3);
+}
+
+.header-logo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px; font-weight: 400;
+  color: var(--green);
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(0,255,65,0.6);
+}
+
+.header-logo-dot {
+  width: 8px; height: 8px;
+  background: var(--green); border-radius: 50%;
+  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,255,65,0.4);
+  animation: logoBlink 2s infinite;
+}
+@keyframes logoBlink {
+  0%,90%,100% { opacity: 1; }
+  95%          { opacity: 0.2; }
+}
+
+.logo-bracket { color: var(--text3); font-size: 16px; }
+
+.header-nav {
+  display: flex; align-items: center; gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px; padding: 3px;
+  background: rgba(0,255,65,0.03);
+}
+
+.nav-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 16px; border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap;
+  color: var(--text3);
+  transition: all .15s;
+}
+.nav-btn i { font-size: 11px; }
+.nav-btn:hover { color: var(--green); background: var(--green-dim); }
+.nav-btn.active {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,255,65,0.3);
+  text-shadow: 0 0 8px rgba(0,255,65,0.5);
+}
+
+.header-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--green3); border: 1px solid var(--border2);
+  padding: 3px 12px; border-radius: 2px;
+}
+
+/* ── HAMBURGER MENU (mobile only) ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: none; border: none;
+  cursor: pointer; padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.hamburger-btn:hover { background: var(--green-dim); }
+.hamburger-btn span {
+  display: block; width: 22px; height: 2px;
+  background: var(--green); border-radius: 2px;
+  transition: all 0.25s;
+  transform-origin: center;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 60px; left: 0; right: 0;
+  background: #030a03;
+  border-bottom: 2px solid var(--green);
+  z-index: 9990;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  gap: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 20px rgba(0,255,65,0.1);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 400;
+  letter-spacing: 0.06em;
+  text-decoration: none; color: var(--text2);
+  transition: all 0.15s;
+}
+.mobile-nav a:hover { background: var(--green-dim); color: var(--green); }
+.mobile-nav a.active-page { color: var(--green); background: var(--green-dim); border-left: 2px solid var(--green); }
+.mobile-nav a i { font-size: 13px; width: 18px; text-align: center; }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav    { display: none !important; }
+  .header-badge  { display: none !important; }
+  .header { padding: 0 20px; }
+  .hero, .content, .divider { padding-left: 20px; padding-right: 20px; }
+  .hero-title { font-size: 36px; }
+  .hero-deco { display: none; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .header-badge { display: none; }
+  .mission-card, .threat-card, .stack-card { padding: 22px; }
+  .mission-card-text, .threat-card-text { padding-left: 0; }
+  .footer { padding-left: 20px; padding-right: 20px; }
+}
+
+/* ── TERMINAL PROMPT ── */
+.prompt { color: var(--green3); }
+.prompt-arrow { color: var(--green); }
+.cursor {
+  display: inline-block; width: 8px; height: 14px;
+  background: var(--green); vertical-align: middle;
+  animation: blink 1.2s step-end infinite;
+  margin-left: 2px;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 72px 40px 56px;
+  overflow: hidden;
+}
+
+.hero-terminal-bar {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 32px; font-size: 11px;
+  color: var(--text3); letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.hero-terminal-bar::before {
+  content: '';
+  display: inline-block; width: 32px; height: 1px;
+  background: var(--green3);
+}
+
+.hero-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(36px, 5.5vw, 72px);
+  font-weight: 400; line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--green);
+  text-shadow: 0 0 30px rgba(0,255,65,0.25);
+  margin-bottom: 6px;
+}
+
+.hero-title .dim { color: var(--green3); }
+.hero-title .red { color: var(--red); text-shadow: 0 0 20px rgba(255,34,68,0.3); }
+
+.hero-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--text2);
+  max-width: 560px; line-height: 1.8;
+  margin: 20px 0 36px;
+  border-left: 2px solid var(--green3);
+  padding-left: 16px;
+}
+
+.hero-deco {
+  position: absolute; right: 0; top: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 180px; font-weight: 400;
+  color: rgba(0,255,65,0.03); line-height: 1;
+  pointer-events: none; user-select: none;
+  letter-spacing: -0.04em;
+}
+
+/* ── GITHUB BUTTON ── */
+.github-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent;
+  color: var(--green); border: 1px solid var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 24px; border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.15s;
+  text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+.github-btn:hover {
+  background: var(--green-dim);
+  box-shadow: 0 0 20px rgba(0,255,65,0.15), inset 0 0 20px rgba(0,255,65,0.05);
+}
+.github-btn i { font-size: 14px; }
+
+/* ── DIVIDER ── */
+.divider {
+  margin: 0 40px 48px;
+  height: 1px; background: var(--border2);
+  position: relative; z-index: 1;
+}
+.divider::before {
+  content: '// SYSTEM INFO';
+  position: absolute; top: -8px; left: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  color: var(--text3);
+  background: var(--bg); padding-right: 12px;
+}
+
+/* ── SECTION HEAD ── */
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; position: relative; z-index: 1;
+}
+.section-head-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--green3); white-space: nowrap;
+}
+.section-head-label::before { content: '> '; color: var(--green); }
+.section-head-line { flex: 1; height: 1px; background: var(--border2); }
+
+/* ── CONTENT ── */
+.content {
+  position: relative; z-index: 1;
+  padding: 0 40px 56px;
+}
+
+/* ── MISSION CARD ── */
+.mission-card {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 32px 36px;
+  margin-bottom: 20px;
+  background: var(--bg2);
+  position: relative; overflow: hidden;
+}
+.mission-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(0,255,65,0.4);
+}
+
+.mission-card-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.mission-card-icon {
+  width: 36px; height: 36px;
+  border: 1px solid var(--green);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--green);
+  background: var(--green-dim);
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(0,255,65,0.15);
+}
+.mission-card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px; color: var(--green);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 12px rgba(0,255,65,0.3);
+}
+.mission-card-text {
+  font-size: 13px; color: var(--text2);
+  line-height: 1.85;
+  padding-left: 50px;
+}
+.mission-card-text .hi { color: var(--green); }
+.mission-card-text .warn { color: var(--amber); }
+
+/* ── THREAT CARD ── */
+.threat-card {
+  border: 1px solid rgba(255,34,68,0.3);
+  border-radius: 2px;
+  padding: 32px 36px;
+  margin-bottom: 20px;
+  background: rgba(10,3,5,0.8);
+  position: relative; overflow: hidden;
+}
+.threat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--red);
+  box-shadow: 0 0 12px rgba(255,34,68,0.4);
+}
+.threat-card-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.threat-card-icon {
+  width: 36px; height: 36px;
+  border: 1px solid var(--red);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--red);
+  background: var(--red-dim);
+  flex-shrink: 0;
+}
+.threat-card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px; color: var(--red);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 12px rgba(255,34,68,0.3);
+}
+.threat-card-text {
+  font-size: 13px; color: #c87878;
+  line-height: 1.85;
+  padding-left: 50px;
+}
+
+/* ── FEATURE GRID ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.feature-card {
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  padding: 22px 22px 20px;
+  background: var(--bg2);
+  transition: border-color 0.15s, background 0.15s;
+  position: relative; overflow: hidden;
+  cursor: default;
+}
+.feature-card:hover {
+  border-color: rgba(0,255,65,0.35);
+  background: var(--bg3);
+}
+.feature-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+}
+.feature-card:nth-child(1)::after,
+.feature-card:nth-child(5)::after { background: var(--green); box-shadow: 0 0 8px rgba(0,255,65,0.4); }
+.feature-card:nth-child(2)::after,
+.feature-card:nth-child(6)::after { background: var(--red); box-shadow: 0 0 8px rgba(255,34,68,0.4); }
+.feature-card:nth-child(3)::after { background: var(--amber); box-shadow: 0 0 8px rgba(255,184,0,0.4); }
+.feature-card:nth-child(4)::after { background: var(--cyan); box-shadow: 0 0 8px rgba(0,229,255,0.4); }
+
+.feature-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--text3);
+  letter-spacing: 0.2em; margin-bottom: 12px;
+}
+.feature-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; color: var(--green);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.feature-text {
+  font-size: 12px; color: var(--text2);
+  line-height: 1.75;
+}
+
+/* ── STACK CARD ── */
+.stack-card {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 32px 36px;
+  background: var(--bg);
+  margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+
+.stack-card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.stack-card-title::before {
+  content: '#';
+  color: var(--green3);
+}
+
+.stack-groups {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.stack-group-label {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.stack-group-label::before { content: '//'; color: var(--green3); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.tech-pill {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 0.06em;
+  padding: 5px 12px; border-radius: 2px;
+  border: 1px solid; transition: all 0.15s;
+  cursor: default;
+}
+.tech-pill:hover { filter: brightness(1.2); }
+.tech-pill.g { color: var(--green2); border-color: rgba(0,204,51,0.35); background: rgba(0,204,51,0.07); }
+.tech-pill.r { color: #ff6688; border-color: rgba(255,34,68,0.35); background: rgba(255,34,68,0.07); }
+.tech-pill.a { color: var(--amber); border-color: rgba(255,184,0,0.35); background: rgba(255,184,0,0.07); }
+.tech-pill.c { color: var(--cyan); border-color: rgba(0,229,255,0.35); background: rgba(0,229,255,0.07); }
+
+/* ── ALERT CARD ── */
+.alert-card {
+  border: 1px solid rgba(255,184,0,0.3);
+  border-radius: 2px; padding: 20px 24px;
+  background: var(--amber-dim);
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 20px;
+}
+.alert-icon {
+  font-size: 14px; color: var(--amber);
+  flex-shrink: 0; margin-top: 2px;
+}
+.alert-text {
+  font-size: 12px; color: #c8a060; line-height: 1.75;
+}
+.alert-text strong { color: var(--amber); font-weight: 500; }
+
+/* ── LOG LINE ── */
+.log-line {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; color: var(--text3);
+  padding: 10px 0;
+  border-top: 1px solid var(--border2);
+  display: flex; gap: 16px; align-items: baseline;
+}
+.log-time { color: var(--green3); min-width: 80px; flex-shrink: 0; }
+.log-tag  { min-width: 70px; flex-shrink: 0; }
+.log-ok   { color: var(--green2); }
+.log-warn { color: var(--amber); }
+.log-err  { color: var(--red); }
+.log-msg  { color: var(--text2); }
+
+/* ── FOOTER ── */
+.bottom-bar {
+  height: 1px;
+  background: var(--green);
+  box-shadow: 0 0 16px rgba(0,255,65,0.4);
+  position: relative; z-index: 1;
+}
+
+.footer {
+  background: var(--bg);
+  padding: 20px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border2);
+}
+
+.footer-logo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px; color: var(--green);
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+.footer-note {
+  font-size: 10px; color: var(--text3); letter-spacing: 0.08em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.footer-note a { color: var(--text3); text-decoration: none; transition: color 0.15s; }
+.footer-note a:hover { color: var(--green); }
+
+/* ── GLITCH ── */
+@keyframes glitch {
+  0%,94%,100% { clip-path: none; transform: none; }
+  95% { clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); transform: translate(-2px, 0); }
+  97% { clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); transform: translate(2px, 0); color: var(--red); }
+}
+.hero-title:hover { animation: glitch 3s infinite; }
+
+/* ── ANIMATE ── */
+@keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.mission-card  { animation: fadeIn 0.5s ease 0.1s both; }
+.threat-card   { animation: fadeIn 0.5s ease 0.15s both; }
+.feature-card  { animation: fadeIn 0.4s ease both; }
+.feature-card:nth-child(1){animation-delay:.08s}
+.feature-card:nth-child(2){animation-delay:.14s}
+.feature-card:nth-child(3){animation-delay:.20s}
+.feature-card:nth-child(4){animation-delay:.26s}
+.feature-card:nth-child(5){animation-delay:.32s}
+.feature-card:nth-child(6){animation-delay:.38s}
+.stack-card    { animation: fadeIn 0.5s ease 0.2s both; }
+.alert-card    { animation: fadeIn 0.5s ease 0.25s both; }
+
+@media (max-width: 900px) {
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+  .stack-groups { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* ── HAMBURGER MOBILE MENU ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.16); }
+.hamburger-btn span {
+  display: block; width: 18px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav {
+    display: none !important;
+    position: fixed !important;
+    top: 64px; left: 0; right: 0;
+    background: #0a0a0f !important;
+    border-bottom: 2px solid rgba(255,255,255,0.1) !important;
+    flex-direction: column !important;
+    padding: 10px 16px 14px !important;
+    gap: 4px !important;
+    z-index: 999 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    border-radius: 0 !important;
+  }
+  .header-nav.open { display: flex !important; }
+  .nav-btn {
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+  .header-badge { display: none !important; }
+  .header-logo { font-size: 18px !important; }
+  .header, .site-header { padding: 0 16px !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── BOOT LOADER ── -->
+<div id="boot-overlay">
+  <canvas id="matrix-canvas"></canvas>
+  <div id="boot-ui">
+    <div id="boot-logo">[FinSafe]</div>
+    <div id="boot-lines"></div>
+    <div id="boot-bar-wrap"><div id="boot-bar"></div></div>
+    <div id="boot-status">INITIALIZING...</div>
+  </div>
+</div>
+
+<style>
+#boot-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #030a03;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#boot-overlay.fade-out { opacity: 0; pointer-events: none; }
+#boot-overlay.gone { display: none; }
+#matrix-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#boot-ui {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 18px; width: min(480px, 90vw);
+}
+#boot-logo {
+  font-family: "Share Tech Mono", monospace;
+  font-size: clamp(28px, 6vw, 48px);
+  color: #00ff41; letter-spacing: 0.1em;
+  text-shadow: 0 0 20px rgba(0,255,65,0.8), 0 0 40px rgba(0,255,65,0.4);
+  animation: bootLogoFlicker 0.18s steps(1) 4;
+}
+@keyframes bootLogoFlicker { 0%,100%{opacity:1} 50%{opacity:0.15} }
+#boot-lines {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px; color: #3d6b3d; width: 100%;
+  letter-spacing: 0.06em; min-height: 130px; line-height: 2;
+}
+#boot-lines .line-ok   { color: #00cc33; }
+#boot-lines .line-warn { color: #ffb800; }
+#boot-lines .line-err  { color: #ff2244; }
+#boot-lines .line-dim  { color: #2a4a2a; }
+#boot-bar-wrap { width: 100%; height: 3px; background: rgba(0,255,65,0.1); border-radius: 1px; overflow: hidden; }
+#boot-bar { height: 100%; width: 0%; background: #00ff41; box-shadow: 0 0 12px rgba(0,255,65,0.8); transition: width 0.12s ease; }
+#boot-status { font-family: "Share Tech Mono", monospace; font-size: 11px; color: #3d6b3d; letter-spacing: 0.2em; text-transform: uppercase; align-self: flex-start; }
+#boot-status.active { color: #00ff41; }
+</style>
+
+<script>
+(function() {
+  var canvas = document.getElementById("matrix-canvas");
+  var ctx    = canvas.getContext("2d");
+  var chars  = "01アイウエオカキクケコサシスセソタチ".split("");
+  var cols, drops, raf;
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols  = Math.floor(canvas.width / 16);
+    drops = Array(cols).fill(1);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(3,10,3,0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "13px \"Share Tech Mono\", monospace";
+    drops.forEach(function(y, i) {
+      var ch     = chars[Math.floor(Math.random() * chars.length)];
+      var bright = Math.random() > 0.92;
+      ctx.fillStyle = bright ? "#00ff41" : "#1a4a1a";
+      ctx.fillText(ch, i * 16, y * 16);
+      if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+    raf = requestAnimationFrame(drawMatrix);
+  }
+  drawMatrix();
+
+  var bootLines  = document.getElementById("boot-lines");
+  var bootBar    = document.getElementById("boot-bar");
+  var bootStatus = document.getElementById("boot-status");
+  var overlay    = document.getElementById("boot-overlay");
+
+  var lines = [
+    { t: 80,   cls: "line-dim",  txt: "BIOS v2.1.4  :: POST OK" },
+    { t: 200,  cls: "line-ok",   txt: "[OK] Cohere engine ─ ONLINE" },
+    { t: 340,  cls: "line-ok",   txt: "[OK] Apify transcript pipeline ─ READY" },
+    { t: 470,  cls: "line-ok",   txt: "[OK] Supabase pgvector ─ CONNECTED" },
+    { t: 590,  cls: "line-warn", txt: "[WARN] Finnhub rate limit ─ 60 req/min" },
+    { t: 710,  cls: "line-ok",   txt: "[OK] NSE/BSE feed ─ 30 symbols tracked" },
+    { t: 830,  cls: "line-ok",   txt: "[OK] Scira AI ─ ONLINE" },
+    { t: 940,  cls: "line-err",  txt: "[SEC] VirusTotal scan ─ ACTIVE" },
+    { t: 1060, cls: "line-ok",   txt: "[OK] RAG vector store ─ READY" },
+    { t: 1180, cls: "line-ok",   txt: "BOOT COMPLETE ─ loading interface..." },
+  ];
+
+  lines.forEach(function(item, idx) {
+    setTimeout(function() {
+      var div       = document.createElement("div");
+      div.className = item.cls;
+      div.textContent = "> " + item.txt;
+      bootLines.appendChild(div);
+      bootLines.scrollTop = bootLines.scrollHeight;
+      var pct = Math.round(((idx + 1) / lines.length) * 100);
+      bootBar.style.width = pct + "%";
+      bootStatus.textContent = "LOADING... " + pct + "%";
+      bootStatus.classList.add("active");
+    }, item.t);
+  });
+
+  setTimeout(function() {
+    var flashes = 0;
+    var fi = setInterval(function() {
+      canvas.style.filter = (flashes % 2 === 0)
+        ? "hue-rotate(180deg) brightness(2.5)"
+        : "none";
+      flashes++;
+      if (flashes >= 8) {
+        clearInterval(fi);
+        canvas.style.filter = "none";
+        overlay.classList.add("fade-out");
+        setTimeout(function() {
+          overlay.classList.add("gone");
+          cancelAnimationFrame(raf);
+        }, 650);
+      }
+    }, 55);
+  }, 1380);
+})();
+</script>
+
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <a class="header-logo" href="/">
+    <div class="header-logo-dot"></div>
+    <span class="logo-bracket">[</span>FinSafe<span class="logo-bracket">]</span>
+  </a>
+  <nav class="header-nav" id="headerNav">
+    <a class="nav-btn" href="/"><i class="fas fa-terminal"></i> Analyzer</a>
+    <a class="nav-btn" href="/newsfeed"><i class="fas fa-rss"></i> Markets</a>
+    <a class="nav-btn" href="/blindsimulation"><i class="fas fa-user-secret"></i> Blind Sim</a>
+    <a class="nav-btn active" href="/about"><i class="fas fa-info-circle"></i> About</a>
+  </nav>
+  <div class="header-badge">v1.0.0 // docs</div>
+  
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" onclick="(function(){ var n=document.getElementById('headerNav'); var b=document.getElementById('hamburgerBtn'); n.classList.toggle('open'); b.classList.toggle('open'); })()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/"><i class="fas fa-bolt"></i> Analyzer</a>
+  <a href="/newsfeed"><i class="fas fa-chart-line"></i> India Markets</a>
+  <a href="/blindsimulation"><i class="fas fa-eye-slash"></i> Blind Sim</a>
+  <a href="/about" class="active-page"><i class="fas fa-info-circle"></i> About</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-deco">SAFE</div>
+  <div class="hero-terminal-bar">
+    <span class="prompt">root@finsafe</span>
+    <span class="prompt-arrow">~</span>
+    <span>$ cat about.txt</span>
+    <span class="cursor"></span>
+  </div>
+  <h1 class="hero-title">
+    WHAT IS<br>
+    <span class="dim">//</span> FIN<span class="red">SAFE</span><span class="dim">?</span>
+  </h1>
+  <p class="hero-sub">
+    FinSafe helps everyday Indian investors understand what financial YouTubers are actually saying — before you invest your money. We analyse any YouTube video and give you a clear, honest breakdown in simple language.
+  </p>
+  <a class="github-btn" href="https://github.com/your-username/finsafe" target="_blank" rel="noopener">
+    <i class="fab fa-github"></i>
+    View Source Code on GitHub
+    <i class="fas fa-external-link-alt" style="font-size:10px;opacity:0.6"></i>
+  </a>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── MAIN CONTENT ── -->
+<section class="content">
+
+  <div class="section-head">
+    <div class="section-head-label">The Problem</div>
+    <div class="section-head-line"></div>
+  </div>
+
+  <div class="threat-card">
+    <div class="threat-card-header">
+      <div class="threat-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="threat-card-title">Millions of Indians invest based on YouTube advice — with no way to check if it's safe</div>
+    </div>
+    <div class="threat-card-text">
+      India now has over 100 million active investors. Many of them rely on YouTube finance creators for investment ideas — but most of these creators are not regulated, not certified, and sometimes paid to promote certain stocks without telling you. Their videos can sound very convincing, but the risks are often hidden or mentioned only briefly. <span style="color:var(--red)">One wrong investment decision can cost you your savings.</span><br><br>
+      FinSafe was built to protect you from that. Paste any YouTube video link, and we will analyse the entire video and show you exactly what the creator is recommending, what risks they didn't mention, and whether their advice can be trusted — all in plain, simple English.
+    </div>
+  </div>
+
+  <div class="mission-card">
+    <div class="mission-card-header">
+      <div class="mission-card-icon"><i class="fas fa-shield-alt"></i></div>
+      <div class="mission-card-title">How FinSafe protects you</div>
+    </div>
+    <div class="mission-card-text">
+      When you paste a YouTube video link, FinSafe <span class="hi">reads every word spoken in the video</span> using AI. It then checks what the creator is recommending, looks up their past reputation, searches for related news, and gives you a clear report — including a <span class="warn">trust score out of 100</span>, a list of red flags, and a beginner-friendly explanation of everything in the video. You also get live stock charts showing how the recommended stocks have actually performed since the video was posted.
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:44px;">
+    <div class="section-head-label">What FinSafe Does — 6 Features</div>
+    <div class="section-head-line"></div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 01</div>
+      <div class="feature-title">Reads the Full Video</div>
+      <div class="feature-text">We extract every single word spoken in the video — nothing is skipped or shortened. This means our AI analyses the complete advice, not just a summary.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 02</div>
+      <div class="feature-title">Trust &amp; Accuracy Score</div>
+      <div class="feature-text">We give every video two scores out of 100 — one for how trustworthy the creator is, and one for how accurate their claims are. Based on AI research of their history and content.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 03</div>
+      <div class="feature-title">Spots Hidden Risks</div>
+      <div class="feature-text">FinSafe automatically highlights things the creator didn't tell you — like hidden sponsorship deals, unrealistic return promises, missing risk warnings, and exaggerated claims.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 04</div>
+      <div class="feature-title">Live Stock Charts</div>
+      <div class="feature-text">Every company mentioned in the video gets a real price chart. You can see how the stock actually performed from the day the video was posted until today — judge the advice yourself.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 05</div>
+      <div class="feature-title">Beginner-Friendly Breakdown</div>
+      <div class="feature-text">Our Blind Sim mode rewrites the entire analysis in simple language — like explaining it to someone who has never invested before. Uses ₹ examples, zero jargon, honest tone.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">FEATURE 06</div>
+      <div class="feature-title">Ask Questions About the Video</div>
+      <div class="feature-text">After the analysis, you can ask anything — "Is this stock safe for beginners?" or "What did they say about risk?" — and get answers based directly on what was actually said in the video.</div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:44px;">
+    <div class="section-head-label">India Markets Page</div>
+    <div class="section-head-line"></div>
+  </div>
+
+  <div class="mission-card">
+    <div class="mission-card-header">
+      <div class="mission-card-icon" style="border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="mission-card-title" style="color:var(--cyan);text-shadow:0 0 12px rgba(0,229,255,0.3)">
+        Live NSE &amp; BSE news — updated in real time
+      </div>
+    </div>
+    <div class="mission-card-text">
+      The <span class="hi">India Markets</span> section shows you the latest financial news from the Indian stock market — covering 30+ major companies including Reliance, TCS, HDFC Bank, Infosys, Adani, and many more. News is pulled live, filtered for relevance, and sorted by newest first. The ticker at the top and the Market Movers section show you <span class="hi">real price changes</span> over the past two weeks — so you can see which stocks are actually going up or down right now.
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:44px;">
+    <div class="section-head-label">Built With</div>
+    <div class="section-head-line"></div>
+  </div>
+
+  <div class="stack-card">
+    <div class="stack-card-title">Technologies powering FinSafe</div>
+    <div class="stack-groups">
+      <div>
+        <div class="stack-group-label">Server &amp; Database</div>
+        <div class="pill-row">
+          <span class="tech-pill g">Node.js</span>
+          <span class="tech-pill g">Express</span>
+          <span class="tech-pill g">Supabase</span>
+          <span class="tech-pill g">pgvector</span>
+        </div>
+      </div>
+      <div>
+        <div class="stack-group-label">AI Models Used</div>
+        <div class="pill-row">
+          <span class="tech-pill r">Cohere AI</span>
+          <span class="tech-pill r">Scira AI</span>
+          <span class="tech-pill r">Perplexity Sonar</span>
+          <span class="tech-pill r">Puter.js</span>
+        </div>
+      </div>
+      <div>
+        <div class="stack-group-label">Data &amp; APIs</div>
+        <div class="pill-row">
+          <span class="tech-pill a">Apify</span>
+          <span class="tech-pill a">Finnhub</span>
+          <span class="tech-pill a">Yahoo Finance</span>
+          <span class="tech-pill a">SerpAPI</span>
+          <span class="tech-pill c">VirusTotal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:44px;">
+    <div class="section-head-label">How to Use FinSafe — Step by Step</div>
+    <div class="section-head-line"></div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:16px 20px;margin-bottom:20px;">
+    <div class="log-line">
+      <span class="log-time">STEP 01</span>
+      <span class="log-tag log-ok">[START]</span>
+      <span class="log-msg">Find any financial YouTube video you want to check</span>
+    </div>
+    <div class="log-line">
+      <span class="log-time">STEP 02</span>
+      <span class="log-tag log-ok">[INPUT]</span>
+      <span class="log-msg">Copy the video URL and paste it into the Analyzer on the home page</span>
+    </div>
+    <div class="log-line">
+      <span class="log-time">STEP 03</span>
+      <span class="log-tag log-warn">[WAIT]</span>
+      <span class="log-msg">Analysis takes 30–90 seconds — our AI is reading the full video</span>
+    </div>
+    <div class="log-line">
+      <span class="log-time">STEP 04</span>
+      <span class="log-tag log-ok">[READ]</span>
+      <span class="log-msg">Review the trust score, red flags, stock charts, and full breakdown</span>
+    </div>
+    <div class="log-line">
+      <span class="log-time">STEP 05</span>
+      <span class="log-tag log-ok">[ASK]</span>
+      <span class="log-msg">Use the chat box to ask any questions you have about the video</span>
+    </div>
+    <div class="log-line">
+      <span class="log-time">STEP 06</span>
+      <span class="log-tag log-ok">[DECIDE]</span>
+      <span class="log-msg">Now make an informed decision — and always consult a certified advisor</span>
+    </div>
+  </div>
+
+  <div class="alert-card">
+    <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="alert-text">
+      <strong>Important:</strong> FinSafe is for educational purposes only. Nothing on this platform is financial advice. Always consult a SEBI-registered financial advisor before investing. Past performance of any stock does not guarantee future results. FinSafe is not affiliated with any financial institution.
+    </div>
+  </div>
+
+</section>
+
+<!-- ── FOOTER ── -->
+<div class="bottom-bar"></div>
+<footer class="footer">
+  <a class="footer-logo" href="/">
+    <div class="header-logo-dot"></div>
+    [FinSafe]
+  </a>
+  <div class="footer-note">
+    <a href="https://github.com/your-username/finsafe" target="_blank" rel="noopener">
+      <i class="fab fa-github" style="margin-right:5px"></i>github
+    </a>
+    &nbsp;//&nbsp;
+    not affiliated with any financial institution
+    &nbsp;//&nbsp;
+    <span style="color:var(--green3)">educational use only</span>
+  </div>
+</footer>
+
+<!-- ── PROFILE WIDGET ── -->
+<div id="profileWidget" style="display:none">
+  <button id="profileBubble" onclick="toggleProfileMenu()" title="Account">
+    <span id="profileInitial">?</span>
+  </button>
+  <div id="profileMenu" class="profile-menu hidden">
+    <div class="profile-menu-top">
+      <div class="profile-avatar-lg" id="profileAvatarLg">?</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileEmail">Loading…</div>
+        <div class="profile-since" id="profileSince"></div>
+      </div>
+    </div>
+    <div class="profile-menu-divider"></div>
+    <button class="profile-menu-item logout" onclick="handleLogout()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Sign Out
+    </button>
+  </div>
+</div>
+
+<style>
+#profileBubble { position:fixed; bottom:24px; right:24px; z-index:9999; width:46px; height:46px; border-radius:50%; background:#000; border:2.5px solid #000; box-shadow:3px 3px 0 #f5a623; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform 0.15s,box-shadow 0.15s; }
+#profileBubble:hover { transform:translate(-2px,-2px); box-shadow:5px 5px 0 #f5a623; }
+#profileInitial { font-family:'Syne','Arial',sans-serif; font-size:16px; font-weight:800; color:#fff; letter-spacing:-0.02em; user-select:none; }
+.profile-menu { position:fixed; bottom:80px; right:24px; z-index:9998; background:#fff; border:2.5px solid #000; border-radius:0; box-shadow:6px 6px 0 #000; min-width:220px; padding:0; overflow:hidden; animation:profileMenuIn 0.18s ease both; }
+.profile-menu.hidden { display:none; }
+@keyframes profileMenuIn { from{opacity:0;transform:translateY(8px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+.profile-menu-top { display:flex; align-items:center; gap:12px; padding:16px; background:#000; }
+.profile-avatar-lg { width:38px; height:38px; border-radius:50%; background:#f5a623; border:2px solid #f5a623; display:flex; align-items:center; justify-content:center; font-family:'Syne','Arial',sans-serif; font-size:16px; font-weight:800; color:#000; flex-shrink:0; user-select:none; }
+.profile-info { overflow:hidden; }
+.profile-name { font-family:'Syne','Arial',sans-serif; font-size:12px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; letter-spacing:0.02em; }
+.profile-since { font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px; letter-spacing:0.04em; font-family:monospace; }
+.profile-menu-divider { height:2px; background:#000; }
+.profile-menu-item { width:100%; background:none; border:none; padding:13px 16px; font-family:'Syne','Arial',sans-serif; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; cursor:pointer; display:flex; align-items:center; gap:10px; transition:background 0.15s,color 0.15s; }
+.profile-menu-item.logout { color:#c0152a; }
+.profile-menu-item.logout:hover { background:#c0152a; color:#fff; }
+.profile-menu-item.logout:hover svg { stroke:#fff; }
+</style>
+<script>
+(async function initProfileWidget() {
+  if (!window.supabase) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  let sb = null;
+  try {
+    const [keyRes, cfgRes] = await Promise.all([
+      fetch('/get-supabase-anon-key').then(r => r.json()),
+      fetch('/api/config').then(r => r.json()),
+    ]);
+    const anonKey = keyRes.anonKey;
+    const supabaseUrl = cfgRes.supabaseUrl;
+    if (!anonKey || !supabaseUrl) throw new Error('Missing Supabase config');
+    sb = window.supabase.createClient(supabaseUrl, anonKey);
+  } catch (e) { console.warn('[profile-widget] Could not init Supabase:', e.message); return; }
+  const hasOAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('error_description');
+  if (hasOAuthHash) { await new Promise(r => setTimeout(r, 1500)); }
+  let session = null;
+  for (let i = 0; i < 5; i++) {
+    const { data } = await sb.auth.getSession();
+    if (data?.session) { session = data.session; break; }
+    await new Promise(r => setTimeout(r, 500));
+  }
+  if (!session) { if (!window.location.pathname.startsWith('/auth')) { window.location.href = '/auth'; } return; }
+  const user = session.user;
+  const email = user.email || 'User';
+  const initial = email.charAt(0).toUpperCase();
+  const since = new Date(user.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+  document.getElementById('profileInitial').textContent = initial;
+  document.getElementById('profileAvatarLg').textContent = initial;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('profileSince').textContent = 'Member since ' + since;
+  document.getElementById('profileWidget').style.display = 'block';
+  window._profileSb = sb;
+})();
+function toggleProfileMenu() { document.getElementById('profileMenu').classList.toggle('hidden'); }
+document.addEventListener('click', function(e) {
+  const widget = document.getElementById('profileWidget');
+  if (widget && !widget.contains(e.target)) { const menu = document.getElementById('profileMenu'); if (menu) menu.classList.add('hidden'); }
+});
+async function handleLogout() {
+  try { if (window._profileSb) await window._profileSb.auth.signOut(); } catch(e) {}
+  window.location.href = '/auth';
+}
+
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+  document.getElementById('hamburgerBtn').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  if (!nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+<script>
+/* Close hamburger on nav-link click or outside-click */
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('headerNav');
+  var btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    }
+  });
+});
+</script>
+</body>
+</html>

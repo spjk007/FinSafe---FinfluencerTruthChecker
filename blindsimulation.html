@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSafe — Don't Get Fooled by Finfluencers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --black:      #0a0a0a;
+      --off-white:  #f2ede6;
+      --amber:      #f5a623;
+      --amber-dark: #c8841a;
+      --red:        #e84040;
+      --green:      #2ecc71;
+      --muted:      #7a7060;
+      --card-bg:    #141410;
+      --border:     rgba(245, 166, 35, 0.2);
+      --border-sub: rgba(255,255,255,0.06);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(245,166,35,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: #060606;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      border-bottom: 2px solid var(--amber);
+    }
+
+    .header-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--off-white);
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+
+    .header-logo-dot {
+      width: 9px; height: 9px;
+      background: var(--amber); border-radius: 50%;
+      animation: logoPulse 2s infinite;
+    }
+
+    @keyframes logoPulse {
+      0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,166,35,0.5); }
+      50%      { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(245,166,35,0); }
+    }
+
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(245,166,35,0.1);
+      border-radius: 8px; padding: 4px;
+    }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 16px; border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      text-decoration: none; white-space: nowrap;
+      transition: all .2s; color: rgba(255,255,255,0.35);
+    }
+    .nav-btn i { font-size: 11px; }
+    .nav-btn:hover { color: var(--off-white); background: rgba(255,255,255,0.05); }
+    .nav-btn.active { background: var(--amber); color: var(--black); font-weight: 700; }
+
+    .header-badge {
+      background: rgba(245,166,35,0.1);
+      border: 1px solid var(--border);
+      color: var(--amber);
+      font-family: 'Syne', sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      padding: 80px 40px 20px;
+      overflow: hidden; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--amber); }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(48px, 7vw, 88px);
+      font-weight: 800; line-height: 0.9;
+      letter-spacing: -0.04em; color: var(--off-white); margin-bottom: 8px;
+    }
+    .hero-title .accent {
+      color: transparent;
+      -webkit-text-stroke: 3px var(--amber);
+    }
+
+    .hero-sub {
+      font-size: 16px; color: var(--muted);
+      max-width: 480px; line-height: 1.6; margin: 20px 0 0;
+    }
+
+    .hero-deco {
+      position: absolute; right: -20px; top: 40px;
+      font-family: 'Syne', sans-serif;
+      font-size: 240px; font-weight: 800;
+      color: rgba(245,166,35,0.04); line-height: 1;
+      pointer-events: none; letter-spacing: -0.06em; user-select: none;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 48px auto; opacity: 0.25;
+      max-width: 860px; padding: 0 40px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--amber);
+    }
+    .divider span {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--amber);
+    }
+
+    /* ── INPUT SECTION ── */
+    .input-section {
+      position: relative; z-index: 1;
+      max-width: 860px; margin: 0 auto;
+      padding: 0 40px 20px;
+    }
+
+    .input-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px; display: block;
+    }
+
+    .input-wrapper {
+      display: flex; gap: 0;
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+    }
+
+    .yt-icon-wrap {
+      display: flex; align-items: center;
+      padding: 0 18px; flex-shrink: 0;
+    }
+    .yt-icon-wrap svg { width: 22px; height: 22px; color: var(--red); }
+
+    #videoUrl {
+      flex: 1; padding: 18px 12px;
+      border: none; outline: none;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      color: var(--off-white); background: transparent;
+    }
+    #videoUrl::placeholder { color: rgba(122,112,96,0.5); }
+
+    #analyzeBtn {
+      background: var(--amber); color: var(--black); border: none;
+      padding: 0 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: background 0.2s; flex-shrink: 0; white-space: nowrap;
+    }
+    #analyzeBtn:hover:not(:disabled) { background: #fbb84c; }
+    #analyzeBtn:disabled { background: rgba(245,166,35,0.3); cursor: not-allowed; }
+
+    .input-hint {
+      margin-top: 10px; font-size: 12px;
+      color: var(--muted); display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ── INFO CARDS ── */
+    .info-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 860px; margin: 32px auto;
+      padding: 0 40px;
+      position: relative; z-index: 1;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sub);
+      border-top: 2px solid var(--amber);
+      border-radius: 6px; padding: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .info-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.1); }
+
+    .info-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .info-card h3 {
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      color: var(--off-white); margin-bottom: 6px;
+    }
+    .info-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── PROGRESS ── */
+    #progressSection {
+      display: none;
+      max-width: 860px; margin: 32px auto;
+      padding: 0 40px;
+      position: relative; z-index: 1;
+    }
+
+    .progress-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 32px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(245,166,35,0.15);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-steps {
+      display: flex; justify-content: center; gap: 28px; margin-top: 22px; flex-wrap: wrap;
+    }
+    .step {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; opacity: 0.3; transition: opacity 0.4s;
+    }
+    .step.active { opacity: 1; }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+    .step-label { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+    #progressMessage { color: var(--off-white); font-size: 15px; margin-bottom: 6px; }
+
+    /* ── ERROR ── */
+    #errorSection {
+      display: none;
+      background: rgba(232,64,64,0.08);
+      border: 1px solid rgba(232,64,64,0.25);
+      border-radius: 8px; padding: 16px 22px;
+      max-width: 860px; margin: 24px auto;
+      color: #ff8080; font-size: 14px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── RESULTS ── */
+    #resultsSection {
+      display: none;
+      max-width: 860px; margin: 32px auto 0;
+      padding: 0 40px;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .video-meta {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sub);
+      border-left: 3px solid var(--amber);
+      border-radius: 8px; padding: 20px 24px;
+      display: flex; align-items: center; gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .video-thumbnail {
+      width: 96px; height: 54px;
+      object-fit: cover; border-radius: 4px;
+      flex-shrink: 0; background: #1a1a1a;
+    }
+
+    .video-info h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 4px; color: var(--off-white);
+    }
+    .video-info .channel { font-size: 13px; color: var(--muted); }
+
+    .transcript-length {
+      margin-left: auto; text-align: right; flex-shrink: 0;
+    }
+    .tl-num {
+      font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+      color: var(--amber); line-height: 1;
+    }
+    .tl-label { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; margin-top: 2px; }
+
+    /* ── ANALYSIS ── */
+    #analysisContent {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sub);
+      border-radius: 8px; padding: 32px;
+      line-height: 1.75; font-size: 15px;
+    }
+
+    #analysisContent h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--amber);
+      margin: 28px 0 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(245,166,35,0.15);
+      display: flex; align-items: center; gap: 10px;
+    }
+    #analysisContent h2:first-child { margin-top: 0; }
+
+    #analysisContent p { color: rgba(242,237,230,0.85); margin-bottom: 12px; }
+    #analysisContent strong { color: var(--off-white); font-weight: 500; }
+    #analysisContent ul, #analysisContent ol { margin: 10px 0 12px 20px; color: rgba(242,237,230,0.82); }
+    #analysisContent li { margin-bottom: 7px; }
+    #analysisContent blockquote {
+      border-left: 3px solid var(--amber);
+      padding: 12px 18px; margin: 14px 0;
+      background: rgba(245,166,35,0.05);
+      border-radius: 0 6px 6px 0;
+      font-style: italic; color: rgba(242,237,230,0.7);
+    }
+
+    .disclaimer {
+      margin-top: 20px; padding: 16px 20px;
+      border: 1px solid var(--border-sub);
+      background: rgba(245,166,35,0.04);
+      border-radius: 6px;
+      font-size: 12px; color: var(--muted);
+      text-align: center; line-height: 1.7;
+    }
+    .disclaimer strong { color: rgba(122,112,96,0.9); }
+
+    .reset-btn {
+      display: block; margin: 20px auto 0;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--amber);
+      font-family: 'Syne', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 12px 28px; cursor: pointer;
+      border-radius: 6px; transition: all 0.2s;
+    }
+    .reset-btn:hover { background: rgba(245,166,35,0.08); border-color: var(--amber); }
+
+    /* ── CHAT ── */
+    #chatSection {
+      display: none;
+      max-width: 860px; margin: 48px auto 0;
+      padding: 0 40px;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+
+    .chat-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+    }
+    .chat-header-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--amber) 0%, transparent 100%);
+      opacity: 0.25;
+    }
+    .chat-header-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); white-space: nowrap;
+    }
+
+    .chat-subtext {
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 16px; text-align: center;
+    }
+
+    .suggested-qs {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 18px; justify-content: center;
+    }
+    .suggested-q {
+      background: rgba(245,166,35,0.07);
+      border: 1px solid rgba(245,166,35,0.18);
+      color: rgba(245,166,35,0.85);
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      padding: 7px 14px; border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .suggested-q:hover {
+      background: rgba(245,166,35,0.14);
+      border-color: rgba(245,166,35,0.4);
+      color: var(--amber);
+    }
+
+    #chatMessages {
+      display: flex; flex-direction: column; gap: 0; margin-bottom: 16px;
+    }
+
+    .chat-message {
+      display: flex; gap: 14px; padding: 18px 22px;
+      animation: fadeUp 0.3s ease;
+    }
+    .chat-message.user {
+      background: rgba(245,166,35,0.05);
+      border-left: 2px solid rgba(245,166,35,0.4);
+    }
+    .chat-message.assistant {
+      background: var(--card-bg);
+      border-left: 2px solid var(--border-sub);
+    }
+
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0; margin-top: 2px;
+    }
+    .chat-message.user .msg-avatar {
+      background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3);
+    }
+    .chat-message.assistant .msg-avatar {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .msg-content { flex: 1; font-size: 14px; line-height: 1.7; }
+    .chat-message.user .msg-content { color: var(--off-white); }
+    .chat-message.assistant .msg-content { color: rgba(242,237,230,0.85); }
+    .msg-content p { margin-bottom: 8px; }
+    .msg-content strong { color: var(--off-white); font-weight: 500; }
+    .msg-content ul { margin: 8px 0 8px 18px; }
+    .msg-content li { margin-bottom: 5px; }
+
+    .msg-source-tag {
+      display: inline-block; font-size: 10px;
+      font-family: 'Syne', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 2px 9px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .msg-source-tag.rag  { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
+    .msg-source-tag.web  { background: rgba(245,166,35,0.1); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+    .msg-source-tag.both { background: rgba(100,180,255,0.1); color: #64b4ff; border: 1px solid rgba(100,180,255,0.2); }
+
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+    .typing-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--amber); opacity: 0.4;
+      animation: typingPulse 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingPulse {
+      0%, 80%, 100% { opacity: 0.4; transform: scale(1); }
+      40% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .chat-input-bar {
+      display: flex; gap: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .chat-input-bar:focus-within {
+      border-color: rgba(245,166,35,0.5);
+      box-shadow: 0 0 0 3px rgba(245,166,35,0.08);
+    }
+
+    .chat-context-badge {
+      display: flex; align-items: center; padding: 0 14px;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--amber); background: rgba(245,166,35,0.06);
+      border-right: 1px solid rgba(245,166,35,0.12);
+      flex-shrink: 0; gap: 6px; white-space: nowrap;
+    }
+
+    #chatInput {
+      flex: 1; background: transparent; border: none;
+      color: var(--off-white);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      padding: 15px 16px; outline: none;
+      resize: none; min-height: 50px; max-height: 120px; line-height: 1.5;
+    }
+    #chatInput::placeholder { color: rgba(122,112,96,0.45); }
+
+    #sendBtn {
+      background: var(--amber); color: var(--black); border: none;
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0 20px; cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+    }
+    #sendBtn:hover { background: #fbb84c; }
+    #sendBtn:disabled { background: rgba(245,166,35,0.25); cursor: not-allowed; }
+
+    .chat-footer-note {
+      text-align: center; font-size: 11px;
+      color: rgba(122,112,96,0.4); margin-top: 10px;
+    }
+    .chat-footer-note span { color: rgba(245,166,35,0.45); }
+
+    .page-bottom { padding-bottom: 64px; }
+
+    /* ── FOOTER ── */
+    .bottom-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--amber), var(--amber-dark), var(--amber));
+      background-size: 200%; animation: gradientShift 3s linear infinite;
+      position: relative; z-index: 1;
+    }
+    @keyframes gradientShift { 0%{background-position:0%} 100%{background-position:200%} }
+
+    .site-footer {
+      background: #060606;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding: 22px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+      color: var(--off-white); display: flex; align-items: center; gap: 8px;
+    }
+    .footer-note { font-size: 11px; color: rgba(122,112,96,0.4); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .site-header, .site-footer { padding-left: 20px; padding-right: 20px; }
+      .hero { padding: 60px 20px 20px; }
+      .hero-deco { display: none; }
+      .hero-title { font-size: 48px; }
+      .input-section, .info-cards, #progressSection,
+      #errorSection, #resultsSection, #chatSection { padding-left: 20px; padding-right: 20px; }
+      .divider { padding: 0 20px; }
+      .info-cards { grid-template-columns: 1fr; }
+      .input-wrapper { flex-direction: column; }
+      #videoUrl { padding: 16px; }
+      #analyzeBtn { padding: 16px; justify-content: center; }
+      .video-meta { flex-direction: column; align-items: flex-start; }
+      .transcript-length { margin-left: 0; }
+      #analysisContent { padding: 22px; }
+      .suggested-qs { flex-direction: column; }
+      .chat-context-badge { display: none; }
+      .header-badge { display: none; }
+    }
+  
+/* ── HAMBURGER MOBILE MENU ── */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.16); }
+.hamburger-btn span {
+  display: block; width: 18px; height: 2px;
+  background: #fff; border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex !important; }
+  .header-nav {
+    display: none !important;
+    position: fixed !important;
+    top: 64px; left: 0; right: 0;
+    background: #0a0a0f !important;
+    border-bottom: 2px solid rgba(255,255,255,0.1) !important;
+    flex-direction: column !important;
+    padding: 10px 16px 14px !important;
+    gap: 4px !important;
+    z-index: 999 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    border-radius: 0 !important;
+  }
+  .header-nav.open { display: flex !important; }
+  .nav-btn {
+    padding: 12px 14px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+  .header-badge { display: none !important; }
+  .header-logo { font-size: 18px !important; }
+  .header, .site-header { padding: 0 16px !important; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <a class="header-logo" href="/">
+      <div class="header-logo-dot"></div>
+      FinSafe
+    </a>
+    <nav class="header-nav" id="headerNav">
+      <a class="nav-btn" href="/"><i class="fas fa-bolt"></i> Analyzer</a>
+      <a class="nav-btn" href="/newsfeed"><i class="fas fa-chart-line"></i> India Markets</a>
+      <a class="nav-btn active" href="/blindsimulation"><i class="fas fa-eye-slash"></i> Blind Sim</a>
+      <a class="nav-btn" href="/about"><i class="fas fa-info-circle"></i> About</a>
+    </nav>
+    <div class="header-badge">Finfluencer Analyzer</div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" onclick="(function(){ var n=document.getElementById('headerNav'); var b=document.getElementById('hamburgerBtn'); n.classList.toggle('open'); b.classList.toggle('open'); })()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-deco">AI</div>
+    <div class="hero-eyebrow">Financial Awareness Tool</div>
+    <h1 class="hero-title">
+      DON'T GET<br>
+      <span class="accent">FOOLED.</span>
+    </h1>
+    <p class="hero-sub">Paste any finfluencer's YouTube video. We'll decode what they're actually saying — and what they're not telling you.</p>
+  </section>
+
+  <div class="divider"><span>Analyze</span></div>
+
+  <!-- ── INPUT ── -->
+  <div class="input-section">
+    <span class="input-label">YouTube Video URL</span>
+    <div class="input-wrapper">
+      <div class="yt-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      </div>
+      <input type="url" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" spellcheck="false"/>
+      <button id="analyzeBtn" onclick="analyzeVideo()">
+        <i class="fas fa-bolt"></i> Analyze
+      </button>
+    </div>
+    <div class="input-hint">
+      <i class="fas fa-info-circle"></i>
+      Analysis takes 30–90 seconds · Powered by Scira AI
+    </div>
+  </div>
+
+  <!-- ── INFO CARDS ── -->
+  <div class="info-cards" id="infoCards">
+    <div class="info-card">
+      <div class="icon">🎙️</div>
+      <h3>Full Transcript</h3>
+      <p>We pull the complete spoken word from the video — no summaries, no shortcuts.</p>
+    </div>
+    <div class="info-card">
+      <div class="icon">🧠</div>
+      <h3>AI Reality Check</h3>
+      <p>Scira AI breaks down claims with realistic numbers and honest risk assessment.</p>
+    </div>
+    <div class="info-card">
+      <div class="icon">📖</div>
+      <h3>Beginner English</h3>
+      <p>Zero jargon. Explained like you're hearing about investing for the first time.</p>
+    </div>
+  </div>
+
+  <!-- ── PROGRESS ── -->
+  <div id="progressSection">
+    <div class="progress-card">
+      <div class="spinner"></div>
+      <p id="progressMessage">Starting analysis...</p>
+      <p style="font-size:12px; color: var(--muted); margin-top:4px;">This takes 30–90 seconds</p>
+      <div class="progress-steps">
+        <div class="step" id="step1"><div class="step-dot"></div><span class="step-label">Fetching Transcript</span></div>
+        <div class="step" id="step2"><div class="step-dot"></div><span class="step-label">Cohere Reading</span></div>
+        <div class="step" id="step3"><div class="step-dot"></div><span class="step-label">Scira Explaining</span></div>
+        <div class="step" id="step4"><div class="step-dot"></div><span class="step-label">Saving to DB</span></div>
+        <div class="step" id="step5"><div class="step-dot"></div><span class="step-label">Done</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="errorSection"></div>
+
+  <!-- ── RESULTS ── -->
+  <div id="resultsSection">
+    <div class="video-meta">
+      <img class="video-thumbnail" id="videoThumbnail" src="" alt="Video thumbnail" />
+      <div class="video-info">
+        <h2 id="videoTitle"></h2>
+        <p class="channel" id="channelName"></p>
+      </div>
+      <div class="transcript-length" id="transcriptLength"></div>
+    </div>
+    <div id="analysisContent"></div>
+    <div class="disclaimer">
+      <strong>Important:</strong> This tool is for educational purposes only. Nothing here is financial advice. Always consult a certified financial advisor before investing. Past performance does not guarantee future results.
+    </div>
+    <button class="reset-btn" onclick="resetPage()">← Analyze Another Video</button>
+  </div>
+
+  <!-- ── CHAT ── -->
+  <div id="chatSection">
+    <div class="chat-header">
+      <div class="chat-header-line"></div>
+      <div class="chat-header-text">💬 Ask About This Video</div>
+      <div class="chat-header-line" style="background: linear-gradient(90deg, transparent 0%, var(--amber) 100%); opacity:0.25;"></div>
+    </div>
+    <p class="chat-subtext">Ask anything about what was said — the AI uses the transcript + live web search to answer.</p>
+    <div class="suggested-qs" id="suggestedQs">
+      <button class="suggested-q" onclick="askSuggested(this)">Is this advice actually profitable?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">What are the real risks they didn't mention?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">Is this person regulated/licensed?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">What do experts actually say about this?</button>
+      <button class="suggested-q" onclick="askSuggested(this)">Break this down like I'm 15</button>
+    </div>
+    <div id="chatMessages"></div>
+    <div class="chat-input-bar">
+      <div class="chat-context-badge">
+        <span>📄</span>
+        <span id="chatContextLabel">Video Context</span>
+      </div>
+      <textarea id="chatInput" placeholder="Ask anything about this video's claims..." rows="1"></textarea>
+      <button id="sendBtn" onclick="sendChatMessage()">
+        Send
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <p class="chat-footer-note">Grounded in <span>transcript from Supabase</span> + <span>live web search</span> · Not financial advice</p>
+    <div class="page-bottom"></div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="bottom-bar"></div>
+  <footer class="site-footer">
+    <div class="footer-logo"><div class="header-logo-dot"></div> FinSafe</div>
+    <div class="footer-note">Helping beginners invest with their eyes open · Not affiliated with any financial institution</div>
+  </footer>
+
+  <script>
+    let currentVideoId = null, currentVideoTitle = '', chatHistory = [], currentSessionId = null;
+
+    function getSessionKey(videoId) { return `finsafe_session_${videoId}`; }
+
+    function loadOrCreateSession(videoId) {
+      const key = getSessionKey(videoId);
+      let sid = localStorage.getItem(key);
+      if (!sid) {
+        sid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+          const r = Math.random() * 16 | 0;
+          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        localStorage.setItem(key, sid);
+      }
+      return sid;
+    }
+
+    function setStep(n) {
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`step${i}`).classList.toggle('active', i <= n);
+      }
+    }
+
+    async function analyzeVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      if (!url) { showError('Please enter a YouTube URL.'); return; }
+      document.getElementById('analyzeBtn').disabled = true;
+      document.getElementById('infoCards').style.display = 'none';
+      document.getElementById('errorSection').style.display = 'none';
+      document.getElementById('resultsSection').style.display = 'none';
+      document.getElementById('chatSection').style.display = 'none';
+      document.getElementById('progressSection').style.display = 'block';
+      setStep(1);
+      try {
+        const response = await fetch('/api/blindsim/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ videoUrl: url }),
+        });
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.step !== undefined) {
+                  setStep(data.step);
+                  document.getElementById('progressMessage').textContent = data.message;
+                } else if (data.success) {
+                  setStep(5); showResults(data);
+                } else if (data.error) {
+                  showError(data.error);
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      } catch (err) { showError('Connection error: ' + err.message); }
+      document.getElementById('progressSection').style.display = 'none';
+      document.getElementById('analyzeBtn').disabled = false;
+    }
+
+    async function showResults(data) {
+      currentVideoId = data.videoId; currentVideoTitle = data.videoTitle;
+      currentSessionId = loadOrCreateSession(data.videoId); chatHistory = [];
+      document.getElementById('videoTitle').textContent = data.videoTitle;
+      document.getElementById('channelName').textContent = '📺 ' + data.channelName;
+      document.getElementById('videoThumbnail').src = `https://img.youtube.com/vi/${data.videoId}/mqdefault.jpg`;
+      document.getElementById('transcriptLength').innerHTML = `<div class="tl-num">${(data.transcriptLength/1000).toFixed(1)}K</div><div class="tl-label">chars analyzed</div>`;
+      document.getElementById('analysisContent').innerHTML = parseMarkdown(data.analysis);
+      document.getElementById('chatContextLabel').textContent = data.videoTitle.slice(0, 28) + (data.videoTitle.length > 28 ? '…' : '');
+      document.getElementById('chatMessages').innerHTML = '';
+      document.getElementById('suggestedQs').style.display = 'flex';
+      document.getElementById('resultsSection').style.display = 'block';
+      document.getElementById('chatSection').style.display = 'block';
+      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      await restoreSession(currentSessionId);
+    }
+
+    async function restoreSession(sessionId) {
+      try {
+        const res = await fetch(`/api/blindsim/chat/history?sessionId=${encodeURIComponent(sessionId)}`);
+        if (!res.ok) return;
+        const { messages } = await res.json();
+        if (!messages || messages.length === 0) return;
+        document.getElementById('suggestedQs').style.display = 'none';
+        const msgs = document.getElementById('chatMessages');
+        const banner = document.createElement('div');
+        banner.style.cssText = 'text-align:center;font-size:11px;color:var(--muted);padding:12px 0 4px;';
+        banner.textContent = `↩ Resumed — ${messages.length} messages from your last session`;
+        msgs.appendChild(banner);
+        for (const msg of messages) {
+          appendMessage(msg.role, msg.content, msg.source_type || null, true);
+          chatHistory.push({ role: msg.role, content: msg.content });
+        }
+        msgs.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      } catch (e) { console.warn('Session restore failed:', e); }
+    }
+
+    function askSuggested(btn) {
+      document.getElementById('chatInput').value = btn.textContent;
+      document.getElementById('suggestedQs').style.display = 'none';
+      sendChatMessage();
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const question = input.value.trim();
+      if (!question || !currentVideoId) return;
+      input.value = ''; input.style.height = 'auto';
+      document.getElementById('suggestedQs').style.display = 'none';
+      document.getElementById('sendBtn').disabled = true;
+      appendMessage('user', question);
+      chatHistory.push({ role: 'user', content: question });
+      const typingId = appendTyping();
+      try {
+        const response = await fetch('/api/blindsim/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: currentSessionId, videoId: currentVideoId, videoTitle: currentVideoTitle, question, history: chatHistory.slice(-20) }),
+        });
+        const data = await response.json();
+        removeTyping(typingId);
+        if (data.error) { chatHistory.pop(); appendMessage('assistant', '⚠ ' + data.error, null); }
+        else { appendMessage('assistant', data.answer, data.sourceType); chatHistory.push({ role: 'assistant', content: data.answer }); }
+      } catch (err) { removeTyping(typingId); chatHistory.pop(); appendMessage('assistant', '⚠ Connection error. Please try again.', null); }
+      document.getElementById('sendBtn').disabled = false;
+      input.focus();
+    }
+
+    function appendMessage(role, text, sourceType, skipScroll = false) {
+      const msgs = document.getElementById('chatMessages');
+      const wrap = document.createElement('div');
+      wrap.className = `chat-message ${role}`;
+      const avatar = document.createElement('div');
+      avatar.className = 'msg-avatar';
+      avatar.textContent = role === 'user' ? '👤' : '🤖';
+      const content = document.createElement('div');
+      content.className = 'msg-content';
+      if (role === 'assistant' && sourceType) {
+        const badge = document.createElement('div');
+        const labels = { rag:'📄 Transcript Context', web:'🌐 Web Search', both:'📄 + 🌐 Transcript & Web' };
+        badge.className = `msg-source-tag ${sourceType}`;
+        badge.textContent = labels[sourceType] || sourceType;
+        content.appendChild(badge);
+        content.appendChild(document.createElement('br'));
+      }
+      const textNode = document.createElement('div');
+      textNode.innerHTML = parseMarkdown(text);
+      content.appendChild(textNode);
+      wrap.appendChild(avatar); wrap.appendChild(content);
+      msgs.appendChild(wrap);
+      if (!skipScroll) wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    let typingCounter = 0;
+    function appendTyping() {
+      const id = 'typing-' + (++typingCounter);
+      const msgs = document.getElementById('chatMessages');
+      const wrap = document.createElement('div');
+      wrap.id = id; wrap.className = 'chat-message assistant';
+      wrap.innerHTML = `<div class="msg-avatar">🤖</div><div class="msg-content"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+      msgs.appendChild(wrap);
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      return id;
+    }
+
+    function removeTyping(id) { const el = document.getElementById(id); if (el) el.remove(); }
+
+    function showError(msg) {
+      document.getElementById('progressSection').style.display = 'none';
+      document.getElementById('infoCards').style.display = 'grid';
+      const el = document.getElementById('errorSection');
+      el.style.display = 'block';
+      el.innerHTML = `<strong>⚠ Error:</strong> ${msg}<br><small style="opacity:0.7;margin-top:6px;display:block;">Check your .env keys and that the YouTube URL is correct.</small>`;
+      document.getElementById('analyzeBtn').disabled = false;
+    }
+
+    function resetPage() {
+      document.getElementById('resultsSection').style.display = 'none';
+      document.getElementById('chatSection').style.display = 'none';
+      document.getElementById('infoCards').style.display = 'grid';
+      document.getElementById('videoUrl').value = '';
+      document.getElementById('chatMessages').innerHTML = '';
+      chatHistory = []; currentVideoId = null; currentSessionId = null;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function parseMarkdown(text) {
+      return text
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3 style="font-family:\'Syne\',sans-serif;font-size:14px;font-weight:700;color:var(--off-white);margin:18px 0 8px;">$1</h3>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
+        .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>[\s\S]*?<\/li>)(\n<li>[\s\S]*?<\/li>)*/g, (m) => `<ul>${m}</ul>`)
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/^(?!<[hul])/, '<p>').replace(/$(?!<\/[hul])/, '</p>')
+        .replace(/<p><\/p>/g, '').replace(/<p>(<[hul])/g, '$1')
+        .replace(/(<\/[hul][^>]*>)<\/p>/g, '$1');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ta = document.getElementById('chatInput');
+      ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; });
+      ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
+      document.getElementById('videoUrl').addEventListener('keydown', (e) => { if (e.key === 'Enter') analyzeVideo(); });
+      const params = new URLSearchParams(window.location.search);
+      const autoUrl = params.get('v');
+      if (autoUrl) {
+        document.getElementById('videoUrl').value = decodeURIComponent(autoUrl);
+        setTimeout(() => analyzeVideo(), 600);
+      }
+    });
+  </script>
+<script>
+/* Close hamburger on nav-link click or outside-click */
+document.addEventListener('DOMContentLoaded', function() {
+  var nav = document.getElementById('headerNav');
+  var btn = document.getElementById('hamburgerBtn');
+  if (!nav || !btn) return;
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open'); btn.classList.remove('open');
+    }
+  });
+});
+</script>
+</body>
+</html>
